@@ -30,9 +30,9 @@ def main():
     """ Data transfer """
     bar = tqdm(range(FILESIZE), f"Receiving {FILENAME}", unit="B", unit_scale=True, unit_divisor=SIZE)
 
-    with open(f"./recv_{FILENAME}", "x") as f:
+    with open(f"./recv_{FILENAME}", "wb") as f:
         while True:
-            data = conn.recv(SIZE).decode(FORMAT)
+            data = conn.recv(SIZE)
             if not data:
                 break
 
