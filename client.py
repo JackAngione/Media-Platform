@@ -14,20 +14,55 @@ FORMAT = "utf-8"
 FILENAME = filedialog.askopenfilename()
 FILESIZE = os.path.getsize(FILENAME)
 
+def sendMetadata(client, metadataPATH):
+    # CREATING METADATA FILE
 
-def main():
-    """ TCP socket and connecting to the server """
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(ADDR)
-    #CREATING METADATA FILE
-    createMetaData.createMetadata(FILENAME);
+    print("metadataPATH:", metadataPATH)
+    print("metadataSize = ", os.path.getsize(metadataPATH))
+    """ Sending the filename and filesize to the server. """
+    data = f"{metadataPATH}++{os.path.getsize(metadataPATH)}".encode(FORMAT)
+    client.send(data)
+    msg = client.recv(SIZE).decode()
+    print(f"SERVER: {msg}")
+
+    """ METADATA transfer. """
+    bar = tqdm(range(os.path.getsize(metadataPATH)), f"Sending METADATA", unit="B", unit_scale=True, unit_divisor=SIZE)
+    try:
+        f = open(metadataPATH, "rb")
+        while True:
+            data = f.read(SIZE)
+
+            if not data:
+                break
+
+            client.send(data)
+            msg = client.recv(SIZE).decode(FORMAT)
+
+            bar.update(len(data))
+        # perform file operations
+    finally:
+        f.close()
+    # with open(metadataPATH, "rb") as f:
+    #     while True:
+    #         data = f.read(SIZE)
+    #
+    #         if not data:
+    #             break
+    #
+    #         client.send(data)
+    #         msg = client.recv(SIZE).decode(FORMAT)
+    #
+    #         bar.update(len(data))
+    print("DONE SENDING METADATA!")
+    return 0
+
+def sendFile(client):
     """ Sending the filename and filesize to the server. """
     data = f"{FILENAME}_{FILESIZE}".encode(FORMAT)
     client.send(data)
     msg = client.recv(SIZE).decode()
     print(f"SERVER: {msg}")
 
-    """ Data transfer. """
     bar = tqdm(range(FILESIZE), f"Sending {FILENAME}", unit="B", unit_scale=True, unit_divisor=SIZE)
 
     with open(FILENAME, "rb") as f:
@@ -41,6 +76,16 @@ def main():
             msg = client.recv(SIZE).decode(FORMAT)
 
             bar.update(len(data))
+def main():
+    """ TCP socket and connecting to the server """
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect(ADDR)
+    metadataPATH = createMetaData.createMetadata(FILENAME)
+    sendMetadata(client, metadataPATH)
+    sendFile(client)
+
+
+
 
     """ Closing the connection """
     client.close()

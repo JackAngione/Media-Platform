@@ -80,6 +80,6 @@ def createMetadata(filepath):
         f.write("\nUPLOAD DATE: ")
         f.write(datetime.now(utc).strftime("%m/%d/%Y, %H:%M:%S"))
 
-
-FILE = filedialog.askopenfilename()
-createMetadata(FILE)
+        return f"{metaFilePath}/{FILENAME}_metaData.txt"
+#FILE = filedialog.askopenfilename()
+#createMetadata(FILE)
