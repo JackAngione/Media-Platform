@@ -1,8 +1,9 @@
 import os
 import socket
-from tqdm import tqdm
-import tkinter as tk
 from tkinter import filedialog
+
+from tqdm import tqdm
+
 import createMetaData
 
 IP = socket.gethostbyname(socket.gethostname())

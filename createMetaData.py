@@ -2,12 +2,36 @@
 # original file name
 # filesize
 #
-# video title
-# video description
-import os
+# Video title
+# Video description
 import math
-import tkinter as tk
+import os
+
 from tkinter import filedialog
+
+from datetime import datetime
+from pytz import timezone
+
+utc = timezone('UTC')
+
+
+class FileError(Exception):
+    pass
+
+
+def getFileType(extension):
+    fileTypes = {".wav":"Audio", ".mp3": "Audio", ".aac": "Audio", ".flac": "Audio",
+                 ".mp4": "Video", ".mkv": "Video", ",mov": "Video",
+                 ".jpg": "Photo", ".png": "Photo", ".tiff": "Photo"}
+    # Audio = [".wav", ".mp3", ".m4a", ".aac", ".flac"]
+    # Video = [".mp4", ".mkv", ".mov"]
+    # Photo = [".jpg", ".png", ".tiff"]
+
+    try:
+        fileType = fileTypes[extension.lower()]
+        return fileType
+    except KeyError:
+        raise FileError("Invalid FileType")
 
 
 def convert_size(size_bytes):
@@ -22,22 +46,40 @@ def convert_size(size_bytes):
 
 def createMetadata(filepath):
     FILENAME = filepath.split("/")[-1]
+    FILE_EXT = os.path.splitext(FILENAME)[1]
+    FILETYPE = getFileType(FILE_EXT)
+
     FILESIZE = convert_size(os.path.getsize(filepath))
-    print("Enter User: ")
-    USER = input()
+
+    print("FILE TYPE: ", FILETYPE)
     print("File Name = ", FILENAME)
     print("File size = ", FILESIZE)
+    print("FILE Extension: ", FILE_EXT)
+    USER = input("Enter User: ")
+    TITLE = input("Enter Video Title: ")
+    DESC = input("Enter Video Description: ")
     # CREATE FILE
     metaFilePath = filepath.removesuffix(FILENAME)
-    print(metaFilePath)
-    with open(f"{metaFilePath}/metaData.txt", 'w') as f:
+    FILENAME = os.path.splitext(FILENAME)[0]
+    with open(f"{metaFilePath}/{FILENAME}_metaData.txt", 'w') as f:
         f.write("FILENAME: ")
         f.write(FILENAME)
-        f.write("FILESIZE: ")
+
+        f.write("\nFILESIZE: ")
         f.write(FILESIZE)
-        f.write("USER: ")
+
+        f.write("\nUSER: ")
         f.write(USER)
 
+        f.write("\nTITLE: ")
+        f.write(TITLE)
 
-FILENAME = filedialog.askopenfilename()
-createMetadata(FILENAME)
+        f.write("\nDESC: ")
+        f.write(DESC)
+
+        f.write("\nUPLOAD DATE: ")
+        f.write(datetime.now(utc).strftime("%m/%d/%Y, %H:%M:%S"))
+
+
+FILE = filedialog.askopenfilename()
+createMetadata(FILE)
