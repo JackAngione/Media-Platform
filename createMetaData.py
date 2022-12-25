@@ -55,6 +55,7 @@ def createMetadata(filepath):
     print("File Name = ", FILENAME)
     print("File size = ", FILESIZE)
     print("FILE Extension: ", FILE_EXT)
+
     USER = input("Enter User: ")
     TITLE = input("Enter Video Title: ")
     DESC = input("Enter Video Description: ")
@@ -62,7 +63,7 @@ def createMetadata(filepath):
     metaFilePath = filepath.removesuffix(FILENAME)
     FILENAME = os.path.splitext(FILENAME)[0]
     with open(f"{metaFilePath}/{FILENAME}_metaData.txt", 'w') as f:
-        f.write("FILENAME: ")
+        f.write("ORIGINAL FILENAME: ")
         f.write(FILENAME)
 
         f.write("\nFILESIZE: ")

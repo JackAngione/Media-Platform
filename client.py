@@ -7,19 +7,26 @@ from tqdm import tqdm
 import createMetaData
 
 IP = socket.gethostbyname(socket.gethostname())
-PORT = 65432
+PORT = 65433
 ADDR = (IP, PORT)
 SIZE = 1024
 FORMAT = "utf-8"
 FILENAME = filedialog.askopenfilename()
 FILESIZE = os.path.getsize(FILENAME)
 
+
 def sendMetadata(client, metadataPATH):
     # CREATING METADATA FILE
 
-    print("metadataPATH:", metadataPATH)
-    print("metadataSize = ", os.path.getsize(metadataPATH))
+    # print("metadataPATH:", metadataPATH)
+    # print("metadataSize = ", os.path.getsize(metadataPATH))
     """ Sending the filename and filesize to the server. """
+
+    data = input("Enter username for socket")
+    client.send(data.encode(FORMAT))
+    # msg = client.recv(SIZE).decode()
+    # print(f"SERVER: {msg}")
+
     data = f"{metadataPATH}++{os.path.getsize(metadataPATH)}".encode(FORMAT)
     client.send(data)
     msg = client.recv(SIZE).decode()
@@ -39,22 +46,13 @@ def sendMetadata(client, metadataPATH):
             msg = client.recv(SIZE).decode(FORMAT)
 
             bar.update(len(data))
-        # perform file operations
+        client.close()
     finally:
         f.close()
-    # with open(metadataPATH, "rb") as f:
-    #     while True:
-    #         data = f.read(SIZE)
-    #
-    #         if not data:
-    #             break
-    #
-    #         client.send(data)
-    #         msg = client.recv(SIZE).decode(FORMAT)
-    #
-    #         bar.update(len(data))
-    print("DONE SENDING METADATA!")
+        print("DONE SENDING METADATA!")
+
     return 0
+
 
 def sendFile(client):
     """ Sending the filename and filesize to the server. """
@@ -76,19 +74,19 @@ def sendFile(client):
             msg = client.recv(SIZE).decode(FORMAT)
 
             bar.update(len(data))
+
+
 def main():
     """ TCP socket and connecting to the server """
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect(ADDR)
     metadataPATH = createMetaData.createMetadata(FILENAME)
+
     sendMetadata(client, metadataPATH)
+
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect(ADDR)
     sendFile(client)
-
-
-
-
-    """ Closing the connection """
-    client.close()
 
 
 if __name__ == "__main__":

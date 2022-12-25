@@ -3,14 +3,18 @@ import socket
 from tqdm import tqdm
 
 IP = socket.gethostbyname(socket.gethostname())
-PORT = 65432
+PORT = 65433
 ADDR = (IP, PORT)
 SIZE = 1024
 FORMAT = "utf-8"
-
+global USERNAME
 
 def saveMetadata(conn, addr):
     """ Receiving the filename and filesize from the client. """
+    global USERNAME
+    data = conn.recv(SIZE).decode(FORMAT)
+    print("USERNAME = ", data)
+    USERNAME = data
     data = conn.recv(SIZE).decode(FORMAT)
     item = data.split("++")
     METANAME = item[0]
@@ -22,10 +26,9 @@ def saveMetadata(conn, addr):
     print(f"[+] METADATA: {METANAME} received from the client.")
     conn.send("METADATA and filesize received".encode(FORMAT))
 
-
     bar = tqdm(range(METASIZE), f"Receiving {METANAME}", unit="B", unit_scale=True, unit_divisor=SIZE)
     try:
-        f = open(f"./RecievedFiles/{METANAME}", "wb")
+        f = open(f"./ServerFiles/USERS/{USERNAME}/VIDEOS/{METANAME}", "wb")
         while True:
             data = conn.recv(SIZE)
             if not data:
@@ -35,11 +38,12 @@ def saveMetadata(conn, addr):
             conn.send("Data received.".encode(FORMAT))
 
             bar.update(len(data))
+
     finally:
         f.close()
-    #with open(f"./RecievedFiles/{METANAME}", "wb") as f:
-
-    print("SERVER: METADATA SAVED SUCCESSFULLY!!!")
+        conn.close()
+        print("METADATA FINISHED!")
+    # with open(f"./RecievedFiles/{METANAME}", "wb") as f:
     return 0
 
 
@@ -57,7 +61,8 @@ def saveFile(conn, addr):
     """ Data transfer """
     bar = tqdm(range(FILESIZE), f"Receiving {FILENAME}", unit="B", unit_scale=True, unit_divisor=SIZE)
 
-    with open(f"./RecievedFiles/{FILENAME}", "wb") as f:
+    try:
+        f = open(f"./ServerFiles/USERS/{USERNAME}/VIDEOS/{FILENAME}", "wb")
         while True:
             data = conn.recv(SIZE)
             if not data:
@@ -67,7 +72,9 @@ def saveFile(conn, addr):
             conn.send("Data received.".encode(FORMAT))
 
             bar.update(len(data))
-    print("FILE SUCCESSFFULLY SAVED!!!!!")
+    finally:
+        f.close()
+        conn.close()
 
 
 def main():
@@ -81,10 +88,13 @@ def main():
     conn, addr = server.accept()
     print(f"[+] Client connected from {addr[0]}:{addr[1]}")
     saveMetadata(conn, addr)
+
+    conn, addr = server.accept()
+    print(f"[+] Client connected from {addr[0]}:{addr[1]}")
     saveFile(conn, addr)
 
     """ Closing connection. """
-    conn.close()
+
     server.close()
 
 
