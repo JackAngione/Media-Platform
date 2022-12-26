@@ -1,4 +1,4 @@
-# Video Platform
+# Media Platform
 PROJECT: A media platform enphasizing quality and artistry.
 Original issue: 
 Video quality is sacrificied on popular video sharing sites like youtube, to make them convinient. I set out to make a platform that allows consumers to enjoy media (video/audio/images) at it's full quality as apposed to streaming, which (to be efficient) requires compression. 
