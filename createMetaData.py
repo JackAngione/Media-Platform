@@ -6,10 +6,8 @@
 # Video description
 import math
 import os
-
-from tkinter import filedialog
-
 from datetime import datetime
+
 from pytz import timezone
 
 utc = timezone('UTC')
@@ -46,6 +44,7 @@ def convert_size(size_bytes):
 
 def createMetadata(filepath):
     FILENAME = filepath.split("/")[-1]
+
     FILE_EXT = os.path.splitext(FILENAME)[1]
     FILETYPE = getFileType(FILE_EXT)
 
@@ -59,12 +58,17 @@ def createMetadata(filepath):
     USER = input("Enter User: ")
     TITLE = input("Enter Video Title: ")
     DESC = input("Enter Video Description: ")
+    COLLABORATORS = input("Enter the Usernames of any collaborators (if none, press enter): ")
     # CREATE FILE
     metaFilePath = filepath.removesuffix(FILENAME)
     FILENAME = os.path.splitext(FILENAME)[0]
-    with open(f"{metaFilePath}/{FILENAME}_metaData.txt", 'w') as f:
-        f.write("ORIGINAL FILENAME: ")
+    formattedFileName = FILENAME.replace(" ", "").lower()
+    with open(f"{metaFilePath}/{formattedFileName}_metaData.txt", 'w') as f:
+        f.write("ORIGINAL_FILENAME: ")
         f.write(FILENAME)
+
+        f.write("\nFILE TYPE: ")
+        f.write(FILETYPE)
 
         f.write("\nFILESIZE: ")
         f.write(FILESIZE)
@@ -81,6 +85,4 @@ def createMetadata(filepath):
         f.write("\nUPLOAD DATE: ")
         f.write(datetime.now(utc).strftime("%m/%d/%Y, %H:%M:%S"))
 
-        return f"{metaFilePath}/{FILENAME}_metaData.txt"
-#FILE = filedialog.askopenfilename()
-#createMetadata(FILE)
+        return f"{metaFilePath}/{formattedFileName}_metaData.txt"

@@ -1,0 +1,19 @@
+M O N G O D B
+create table:
+---------------------------
+CREATE TABLE Users (
+     ID text,
+     Email text,
+     Password text,
+     Username text,
+     CreationDate text,
+     PRIMARY KEY (ID, Email) )
+---------------------------
+
+
+add User: 
+---------------------------
+
+
+how to backup entire database:
+------------------------------

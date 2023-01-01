@@ -1,0 +1,34 @@
+{"userID":"bH35Gd3","username":"bob","email":"8jkang8@gmail.com","password":"12455", "creationDate": "1/2/2023"}
+
+
+
+VALIDATION CODE: 
+{
+  $jsonSchema: {
+    required: [
+      'userID',
+      'username',
+      'email',
+      'password',
+      'creationDate'
+    ],
+    properties: {
+      userID: {
+        bsonType: 'string',
+        description: 'must be a string and is required'
+      },
+      username: {
+        bsonType: 'string',
+        description: 'must be a string and is required'
+      },
+      email: {
+        bsonType: 'string',
+        description: 'must be a string and is required'
+      },
+      password: {
+        bsonType: 'string',
+        description: 'must be a string and is required'
+      }
+    }
+  }
+}
