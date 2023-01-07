@@ -1,1 +1,10 @@
-{"userID":"xxxxxxx","userUploads":["xxxxxxx_xfdsge3","xxxxxxx_yNdfg64"]}
+{
+  "userID": "xxxxxxx",
+  "videoID": "xWWWWWW",
+  "originalFilename": "The Road [Optimvs Grime Remix] [New Final]",
+  "fileType": "audio",
+  "title": "Video Title!",
+  "fileSize": "77.22MB",
+  "description": "this is the video description!!",
+  "uploadDate": "12/26/2022, 04:41:35"
+}
