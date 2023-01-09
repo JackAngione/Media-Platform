@@ -6,12 +6,5 @@ The idea came to me when watching one of my favorite music videos, which the dir
 
 
 Features: 
- Allow users to create accounts and upload either videos, audio, or imagery. This media can then be downloaded onto the viewer's device via a proprietary format, (to prevent easy piracy) like how Spotify allows one to download music for offline playing 
-         
- TODO:
-
-    upload video or upload audio file and choose an image as cover
-    
-    make the password storing algorithm more secure (currently only hashes the oringinal password using hashlib sha256)
-
+ Allow users to create accounts and upload either videos, audio, or imagery. This media can then be downloaded onto the viewer's device via a proprietary format, like how Spotify allows one to download music for offline playing 
 
