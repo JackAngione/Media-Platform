@@ -119,7 +119,6 @@ def getFollowing(db, userID):
 
 mongoClient = pymongo.MongoClient("mongodb://localhost:27017")
 mongoDB = mongoClient["mediaPlatform"]
-
 # createUser(mongoDB)
 # changeUsername()
 #deleteUser(mongoDB, "gUGLaFi")

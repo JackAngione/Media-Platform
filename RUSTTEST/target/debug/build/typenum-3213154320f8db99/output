@@ -1,0 +1,3 @@
+cargo:rerun-if-changed=build/main.rs
+cargo:rustc-env=TYPENUM_BUILD_CONSTS=c:\Users\8jkan\Documents\GitHub\Video-Platform\RUST_TEST\RUSTTEST\target\debug\build\typenum-3213154320f8db99\out\consts.rs
+cargo:rustc-env=TYPENUM_BUILD_OP=c:\Users\8jkan\Documents\GitHub\Video-Platform\RUST_TEST\RUSTTEST\target\debug\build\typenum-3213154320f8db99\out\op.rs
