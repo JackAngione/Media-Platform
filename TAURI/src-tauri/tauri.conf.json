@@ -33,7 +33,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "videoproject",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -62,9 +62,9 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "VIDEOPLATFORMGUI",
+        "title": "video-platformgui",
         "width": 800,
-        "minWidth": 400,
+        "minWidth": 600,
         "minHeight": 400
       }
     ]

@@ -1,0 +1,31 @@
+#loginDiv{
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    display: flex;
+    transform: translate(-50%, -50%);
+    border: 2px solid black;
+    height: 60px;
+        
+}
+#email-login{
+    margin-right: 10px;
+    width: 20vw;
+    max-width: 200px;
+}
+#password-login{
+    margin-right: 10px;
+    width: 20vw;
+    max-width: 200px;
+}
+#loginFailCSS
+{
+    margin-top: 80px;
+    margin-left: -50%;
+    text-align: center;
+}
+
+h1{
+text-align: center;
+font-size: clamp(1em, 1em + 2vw, 8em);
+}
