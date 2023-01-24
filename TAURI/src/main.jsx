@@ -4,7 +4,8 @@ import {createBrowserRouter, createMemoryRouter, RouterProvider,} from "react-ro
 import Homepage from "./homepage";
 import Root from "./routes/root";
 import ErrorPage from "./routes/error-page.jsx";
-import Login from "./routes/login.jsx";
+import Login from "./routes/login";
+import UserPage from "./routes/userPage";
 import "./style.css";
 
 const router = createBrowserRouter([
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
             {
                 path: "homepage",
                 element: <Homepage/>
+            },
+            {
+                path: "user/:userID",
+                element: <UserPage/>
             },
         ],
     },

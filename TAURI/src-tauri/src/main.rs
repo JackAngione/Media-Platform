@@ -1,12 +1,16 @@
-extern crate serde;
-extern crate serde_json;
+mod pull_uploads;
+
 use std::io::prelude::*;
 use std::net::TcpStream;
 use std::str;
 use std::io::{Error, ErrorKind};
+use mongodb::{Client};
+use tokio;
+use mongodb::bson::{doc, Document};
+use serde_json::json;
 use serde::{Serialize, Deserialize};
 use sha2::{Sha256, Digest};
-use sha2::digest::consts::True;
+
 
 #[cfg_attr(
     all(not(debug_assertions), target_os = "windows"),
@@ -24,7 +28,6 @@ fn rustlogin(email: &str, password: &str) -> bool
     }
     let mut hasher = Sha256::new();
     hasher.update(password.as_bytes());
-
     let hashed_password: String = format!("{:X}",hasher.finalize());
     let login_credentials = LoginJson{
         email_json: email.to_string(),
@@ -42,13 +45,8 @@ fn rustlogin(email: &str, password: &str) -> bool
         stream.read(&mut buffer).unwrap();
         let mut message = str::from_utf8(&buffer).unwrap();
         //REMOVES TRAILING NULLS (0's) FROM THE BUFFER CONVERSION
-        let message = message.trim_matches(char::from(0));
-        //let message = message.trim();
-        println!("{:?}", message.as_bytes());
-        //let message = message.trim().to_lowercase();
-        //let login_status = message.trim();
+        message = message.trim_matches(char::from(0));
 
-        //println!("login status: {}", login_status);
         if message.eq("True")
         {
             println!("returning true!");
@@ -63,13 +61,12 @@ fn rustlogin(email: &str, password: &str) -> bool
         println!("Couldn't connect to server...");
         return false.into();
     }
-
-    //format!("Hello, {}! Password is: {}!", email, password)
 }
 
 fn main() {
+
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![rustlogin])
+        .invoke_handler(tauri::generate_handler![rustlogin, pull_uploads::getuser, pull_uploads::getuploads])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 

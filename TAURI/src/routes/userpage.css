@@ -1,0 +1,21 @@
+#uploadsList
+{
+    border: 2px solid black;
+
+}
+#list-item
+{
+    display: block;
+    position: center;
+    border: 2px solid black;
+    margin-bottom: 10px;
+    width: auto;
+
+}
+#titleLink
+{
+    color: #F09D51;
+}
+
+
+

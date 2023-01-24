@@ -6,5 +6,5 @@ The idea came to me when watching one of my favorite music videos, which the dir
 
 
 Features: 
- Allow users to create accounts and upload either videos, audio, or imagery. This media can then be downloaded onto the viewer's device via a proprietary format, like how Spotify allows one to download music for offline playing 
+ Allow users to create accounts and Upload either videos, audio, or imagery. This media can then be downloaded onto the viewer's device via a proprietary format, like how Spotify allows one to download music for offline playing 
 

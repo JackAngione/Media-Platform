@@ -13,7 +13,6 @@ const Login = () => {
     const navigate = useNavigate();
 
 
-
     async function initLogin() {
         let loginStatus;
         // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -22,12 +21,12 @@ const Login = () => {
         if(loginStatus)
         {
             console.log("successful login!!!! yayaya")
-            openInNewTab('secondPage.html')
+            navigate("/homepage");
         }
         else
         {
             console.log("LOGIN FAILED!")
-            navigate("/homepage");
+
 
         }
         setLoginFail("Login Failed")

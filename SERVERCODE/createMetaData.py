@@ -4,6 +4,8 @@ import filetype
 import string
 import random
 from datetime import datetime
+
+import pymongo
 from pytz import timezone
 
 utc = timezone('UTC')
@@ -50,7 +52,6 @@ def uploadMetadata(db, filepath, USERID, VIDEOID, OGNAME, TITLE, DESC):
     print("FILESIZEPATH = ", fileSizePath)
     FILESIZE = getSize(os.path.getsize(filepath))
 
-
     print("original File Name = ", OGNAME)
     print("File size = ", FILESIZE)
     print("FILE Extension: ", FILE_EXT)
@@ -61,7 +62,7 @@ def uploadMetadata(db, filepath, USERID, VIDEOID, OGNAME, TITLE, DESC):
     # COLLABORATORS = input("Enter the Usernames of any collaborators (if none, press enter): ")
     # CREATE FILE
     collection = db["UPLOADS"]
-    #VIDEOID = generateVideoID(USERID, db)
+    # VIDEOID = generateVideoID(USERID, db)
     userDocument = {
         "userID": f"{USERID}",
         "videoID": f"{VIDEOID}",
@@ -93,5 +94,8 @@ def generateVideoID(userID, db):
             print("videoID is unique!")
             return videoID
 
-# path = "/Client's computer/USERS/06bc40cf41219c012cbc2d6597283326/VIDEOS/theroad[optimvsgrimeremix][newfinal].wav"
-# uploadMetadata(path, "xxxxxxx")
+client = pymongo.MongoClient("mongodb://localhost:27017")
+db = client["mediaPlatform"]
+videoID = generateVideoID("xxxxxxx", db)
+#path = "/Client's computer/USERS/06bc40cf41219c012cbc2d6597283326/VIDEOS/theroad[optimvsgrimeremix][newfinal].wav"
+uploadMetadata(db, "../Client's computer/upload222.mp4", "xxhhhxx", videoID, "original name", "title222!!", "description 2")
