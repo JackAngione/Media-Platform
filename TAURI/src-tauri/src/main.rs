@@ -1,4 +1,5 @@
 mod pull_uploads;
+mod uploadFile;
 
 use std::io::prelude::*;
 use std::net::TcpStream;
@@ -66,7 +67,7 @@ fn rustlogin(email: &str, password: &str) -> bool
 fn main() {
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![rustlogin, pull_uploads::getuser, pull_uploads::getuploads])
+        .invoke_handler(tauri::generate_handler![rustlogin, pull_uploads::getuser, pull_uploads::getuploads, pull_uploads::downloadfileftp, uploadFile::uploaddatabase])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 

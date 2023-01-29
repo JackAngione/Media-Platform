@@ -1,10 +1,8 @@
 import * as React from "react";
-import reactLogo from "../assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "../Login.css";
 import { useNavigate } from "react-router-dom";
 import {useState} from "react";
-import {message} from "@tauri-apps/api/dialog";
 
 const Login = () => {
     const [loginFail, setLoginFail] = useState("");

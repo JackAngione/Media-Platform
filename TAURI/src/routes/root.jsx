@@ -17,8 +17,12 @@ export default function Root() {
                             <a href={`/login`}>Login</a>
                         </li>
                         <li>
-                            <a href={`/user/jack`}>Jack User Page</a>
+                            <a href={`/upload`}>Upload File</a>
                         </li>
+                        <li>
+                            <a href={`/user/xxxxxxx`}>Jack User Page</a>
+                        </li>
+
                     </ul>
                 </nav>
                 <Outlet />

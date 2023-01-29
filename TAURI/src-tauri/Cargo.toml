@@ -22,6 +22,10 @@ tauri = { version = "1.2", features = ["shell-open"] }
 mongodb = "2.3.1"
 tokio = {version = "1.24.2", features = ["full"] }
 futures = "0.3.25"
+suppaftp = {version = "4.6.0"}
+dict = "0.1.5"
+rand = "0.8.5"
+nanorand = "0.7.0"
 
 
 [features]

@@ -6,6 +6,7 @@ import Root from "./routes/root";
 import ErrorPage from "./routes/error-page.jsx";
 import Login from "./routes/login";
 import UserPage from "./routes/userPage";
+import UploadPage from "./routes/upload.jsx";
 import "./style.css";
 
 const router = createBrowserRouter([
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
             {
                 path: "user/:userID",
                 element: <UserPage/>
+            },
+            {
+                path: "upload",
+                element: <UploadPage/>
             },
         ],
     },

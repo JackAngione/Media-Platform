@@ -28,17 +28,22 @@ export default function UserPage() {
         console.log("UserID = " + userIDJSON)
         console.log("Username = " + usernameJSON)
     }
+    async function downloadFile(videoID)
+    {
+        uploadDownload = await invoke("downloadfileftp", {userid: userIDJSON, videoid: videoID}).then((message) => {return message});
+    }
+
     const {userID} = useParams()
     return(
         <>
-
+            <h1>User: {userID}</h1>
             <input
                 id="userNameInput"
                 onChange={(e) => setUserName(e.currentTarget.value)}
                 placeholder="username!!"
             />
             <button type="button" onClick={() => getUserInfo()}>
-                Get User
+                View User
             </button>
             <p>{userName}</p>
 
@@ -49,7 +54,11 @@ export default function UserPage() {
             <ul id="uploadsList">
                 {uploadsJSON.map((item, index) => (
                     <li key={index} id="list-item">
-                        videoID: {item.videoID}  <h1><a id="titleLink" href="#" onClick={console.log("hello")}>TITLE: {item.title}</a> </h1>
+
+                        videoID: {item.videoID}  <h1><a id="titleLink" href="#" onClick={() => {}}>TITLE: {item.title}</a> </h1>
+                        <button type="button" onClick={() => downloadFile(item.videoID)}>
+                            Download
+                        </button>
                     </li>
                 ))}
             </ul>
