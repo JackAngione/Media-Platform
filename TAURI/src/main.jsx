@@ -1,42 +1,25 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {createBrowserRouter, createMemoryRouter, RouterProvider,} from "react-router-dom";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Homepage from "./homepage";
 import Root from "./routes/root";
-import ErrorPage from "./routes/error-page.jsx";
 import Login from "./routes/login";
 import UserPage from "./routes/userPage";
-import UploadPage from "./routes/upload.jsx";
+import UploadPage from "./routes/uploadREGULAR.jsx";
 import "./style.css";
+import NavigationBar from "./navigation.jsx";
 
-const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <Root />,
-        errorElement: <ErrorPage />,
-        children: [
-            {
-                path: "login",
-                element: <Login/>
-            },
-            {
-                path: "homepage",
-                element: <Homepage/>
-            },
-            {
-                path: "user/:userID",
-                element: <UserPage/>
-            },
-            {
-                path: "upload",
-                element: <UploadPage/>
-            },
-        ],
-    },
-]);
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-      <RouterProvider router={router} />
-
+      <BrowserRouter>
+          <NavigationBar/>
+          <Routes>
+              <Route path ="/" element={<Root/>} />
+              <Route path ="login" element={<Login/>} />
+              <Route path ="homepage" element={<Homepage/>} />
+              <Route path ="user/:userID" element={<UserPage/>} />
+              <Route path ="upload" element={<UploadPage/>} />
+          </Routes>
+      </BrowserRouter>
   </React.StrictMode>
 );

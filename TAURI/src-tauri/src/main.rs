@@ -42,8 +42,9 @@ fn rustlogin(email: &str, password: &str) -> bool
         stream.write_all(serialized.unwrap().as_bytes()).expect("Could not send data to server?");
 
         stream.flush().unwrap();
-        let mut buffer = [0; 1024];
-        stream.read(&mut buffer).unwrap();
+        let mut buffer = vec![0; 1024];
+        let read_bytes = stream.read(&mut buffer).unwrap();
+        buffer.truncate(read_bytes);
         let mut message = str::from_utf8(&buffer).unwrap();
         //REMOVES TRAILING NULLS (0's) FROM THE BUFFER CONVERSION
         message = message.trim_matches(char::from(0));
@@ -67,8 +68,7 @@ fn rustlogin(email: &str, password: &str) -> bool
 fn main() {
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![rustlogin, pull_uploads::getuser, pull_uploads::getuploads, pull_uploads::downloadfileftp, uploadFile::uploaddatabase])
+        .invoke_handler(tauri::generate_handler![rustlogin, pull_uploads::getuser, pull_uploads::getuploads, pull_uploads::downloadfileftp, uploadFile::uploaddatabase, uploadFile::sendfile])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-
 }

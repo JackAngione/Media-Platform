@@ -3,6 +3,8 @@ import { invoke } from "@tauri-apps/api/tauri";
 import "../Login.css";
 import { useNavigate } from "react-router-dom";
 import {useState} from "react";
+import axios from "axios";
+import {serverAddress} from "../serverInfo.js";
 
 const Login = () => {
     const [loginFail, setLoginFail] = useState("");
@@ -13,21 +15,25 @@ const Login = () => {
 
     async function initLogin() {
         let loginStatus;
-        // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+        /*RUST LOGIN
         loginStatus = await invoke("rustlogin", {email, password}).then((message) => {return message});
         console.log(loginStatus)
-        if(loginStatus)
-        {
-            console.log("successful login!!!! yayaya")
-            navigate("/homepage");
-        }
-        else
-        {
-            console.log("LOGIN FAILED!")
-
-
-        }
-        setLoginFail("Login Failed")
+         */
+        let inputs = {"email": email, "password": password}
+        axios.post(serverAddress + "/api/login", inputs)
+            .then(response=> {
+                console.log(response.data.success)
+                if(response.data.success)
+                {
+                    console.log("successful login!!!! yayaya")
+                    navigate("/homepage");
+                }
+                else
+                {
+                    console.log("LOGIN FAILED:" + response.data.success)
+                    setLoginFail("Login Failed")
+                }
+            })
     }
     const openInNewTab = url => {
         window.open(url, '_self');
