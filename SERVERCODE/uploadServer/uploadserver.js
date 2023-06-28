@@ -48,5 +48,5 @@ app.post("/upload", upload.array('chunk', 1), async (req, res) => {
     res.send("good")
 })
 
-    app.listen(8000)
+app.listen(8000)
 console.log("server started")

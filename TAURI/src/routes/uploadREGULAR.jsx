@@ -1,23 +1,56 @@
 import * as React from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Form, json} from "react-router-dom";
+import axios from "axios";
+import {serverAddress} from "../serverInfo.js";
 const UploadPage = () => {
-    let [inputs, setInputs] = useState({})
-    //let file= useRef(null);
+    const [title, setTitle] = useState("")
+    const [description, setDescription] = useState("")
+    const [fileSize, setFileSize] = useState("")
+    const [originalFilename, setOriginalFilename] = useState("")
+    const [fileExt, setFileExt] = useState("")
+
 
     const CHUNK_SIZE = 100000000; // 100 MB
-    const [file, setFile] = useState(null);
+    const [file, setFile] = useState();
 
-    const [currentChunkIndex, setCurrentChunkIndex] = useState(null)
-    inputs["userid"] = ""
-    inputs["videoid"] = ""
-    //let [title, set_title] = useState("");
+    //CONVERTS BYTES TO FORMATTED STRING SIZE
+    function formatFileSize(bytes) {
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes === 0) return '0 Byte';
+        const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
+    }
+    function getFileExtension(filename) {
+        return filename.split('.').pop();
+    }
     const handleFileChange = (event) => {
-        setFile(event.target.files[0]);
+        const fileTemp = event.target.files[0]
+        setFile(fileTemp);
+        setFileSize(formatFileSize(fileTemp.size))
+        setOriginalFilename(fileTemp.name)
+        setFileExt(getFileExtension(fileTemp.name))
     };
+    //SEND UPLOAD INFO TO UPLOAD DATABASE
+    async function uploadToDatabase()
+    {
+        let jsonData = {
+            userID: "",
+            uploadID: "",
+            originalFilename: originalFilename,
+            fileType: fileExt,
+            title: title,
+            description: description,
+            fileSize: fileSize,
+            uploadDate: ""
+        }
+        axios.post(serverAddress+"/api/upload", jsonData)
+            .then(function (response) {
+            })
+    }
+    //SEND FILE BYTES TO UPLOAD SERVER
     async function uploadFile(){
-
         if (!file) return;
 
         const chunks = [];
@@ -46,35 +79,13 @@ const UploadPage = () => {
             });
         }
         console.log('File uploaded successfully');
-    };
-    const handleChange = (event) =>
-    {
-        const name = event.target.name;
-        const value = event.target.value;
-        setInputs(values => ({...values, [name]: value}))
     }
 
-    const submitUpload =  (event) => {
+    const submitUpload =  async (event) => {
         event.preventDefault();
+        await uploadToDatabase()
         uploadFile().then(r => console.log("done"));
-
-        /*
-        //GET CURRENT UTC DATE/TIME IN MM/DD/YYYY, HOUR:MIN:SEC FORMAT
-        const now = new Date();
-        const month = `0${now.getUTCMonth() + 1}`.slice(-2);
-        const day = `0${now.getUTCDate()}`.slice(-2);
-        const year = now.getUTCFullYear();
-        const hour = `0${now.getUTCHours()}`.slice(-2);
-        const minute = `0${now.getUTCMinutes()}`.slice(-2);
-        const second = `0${now.getUTCSeconds()}`.slice(-2);
-        const formattedDate = `${month}/${day}/${year}, ${hour}:${minute}:${second}`;
-        //
-        inputs["uploadDate"] = formattedDate
-        inputs = JSON.stringify(inputs);
-        console.log(inputs)
-        */
-        //let submitUpload = await invoke("uploaddatabase", {metadata: inputs}).then((message) => {return message});
-     }
+    }
 
     return(
         <>
@@ -85,8 +96,8 @@ const UploadPage = () => {
                     <input
                         type="text"
                         name="title"
-                        value={inputs.title || ""}
-                        onChange={handleChange}
+                        value={title || ""}
+                        onChange={(e) => setTitle(e.target.value)}
                         placeholder="title"
                     />
                 </label>
@@ -94,15 +105,18 @@ const UploadPage = () => {
                     <input
                         type="text"
                         name="description"
-                        value={inputs.description || ""}
-                        onChange={handleChange}
+                        value={description || ""}
+                        onChange={(e) => setDescription(e.target.value)}
                         placeholder="description"
                     />
                 </label>
 
                 <input type="submit" />
             </form>
-                <p>{inputs.title}{inputs.description}</p>
+            <p>{"title: " + title}</p>
+            <p>{"Description: " + description}</p>
+            <p>{"File Size: " + fileSize}</p>
+            <p>{"File Extension: " + fileExt}</p>
 
         </>
     );

@@ -94,8 +94,10 @@ def generateVideoID(userID, db):
             print("videoID is unique!")
             return videoID
 
+
 client = pymongo.MongoClient("mongodb://localhost:27017")
 db = client["mediaPlatform"]
 videoID = generateVideoID("xxxxxxx", db)
-#path = "/Client's computer/USERS/06bc40cf41219c012cbc2d6597283326/VIDEOS/theroad[optimvsgrimeremix][newfinal].wav"
-uploadMetadata(db, "../Client's computer/upload222.mp4", "xxhhhxx", videoID, "original name", "title222!!", "description 2")
+# path = "/Client's computer/USERS/06bc40cf41219c012cbc2d6597283326/VIDEOS/theroad[optimvsgrimeremix][newfinal].wav"
+uploadMetadata(db, "../Client's computer/upload222.mp4", "xxhhhxx", videoID, "original name", "title222!!",
+               "description 2")

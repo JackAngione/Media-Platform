@@ -10,3 +10,5 @@ RUSTTEST/target/.rustc_info.json
 SERVERCODE/databaseServer/mongoDBconnection.js
 *.mkv
 *.mp4
+/SERVERCODE/uploadServer/uploads/
+/SERVERCODE/uploadServer/uploads/chunks/

@@ -14,6 +14,15 @@ app.post('/api/login', async (req, res) => {
     console.log("login:" + login)
     res.json({success: true})
 })
+
+app.post('/api/upload', async (req, res) => {
+    console.log("upload request made")
+    let login = await db.upload(req.body)
+    console.log("successful upload!")
+})
+
+
+
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
 })
