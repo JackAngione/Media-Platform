@@ -6,7 +6,6 @@ use serde::{Deserialize, Serialize};
 use futures::stream::TryStreamExt;
 use std::fs::File;
 use std::io::{BufReader, Read};
-use suppaftp::{FtpStream};
 use std::io::{Write};
 
 
@@ -67,31 +66,3 @@ pub async fn getuploads(userid: &str) -> Result<(String), (String)>
     return Ok(uploads_json)
 }
 
-#[tauri::command]
-pub fn downloadfileftp(userid: &str, videoid: &str) {
-
-    let mut ftp = FtpStream::connect("127.0.0.1:21").expect("couldnt connect");
-    let _ = ftp.login("Test", "123").expect("couldnt login");
-    //let userDirectory = ""
-    let _ = ftp.cwd(format!("USERS/{}/UPLOADS", userid)).expect("change directory");
-    println!("Current directory: {}", ftp.pwd().expect("no current directory??"));
-    //let filepath = format!("USERS/{}/testDOWN.txt", user_id);
-    println!("DOWNLOADING: {} from user {}", videoid, userid);
-    let mut ftp_file = ftp.retr_as_stream(videoid).unwrap();
-
-
-    let mut buffer = [0; 1024];
-    let mut reader = BufReader::new(&mut ftp_file);
-    let mut local_file = File::create(videoid).unwrap();
-    // Read the data stream in 1024 byte chunks
-    loop
-    {
-        let bytes_read = reader.read(&mut buffer).unwrap();
-        if bytes_read == 0 { break; }
-        local_file.write_all(&buffer[..bytes_read]).unwrap();
-    }
-
-    ftp.finalize_retr_stream(ftp_file).expect("Couldn't finalize stream");
-    println!("Successfully retrieved {} from FTP server!", videoid);
-    ftp.quit().expect("Couldn't quit FTP server :(");
-}

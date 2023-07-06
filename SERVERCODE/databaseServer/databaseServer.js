@@ -21,7 +21,13 @@ app.post('/api/upload', async (req, res) => {
     console.log("successful upload!")
 })
 
-
+app.get('/api/userUpoads', async (req, res) => {
+    const userID = req.query.userID
+    console.log("userID = " + userID)
+    let uploads = await db.getUploads(userID)
+    res.send(uploads)
+    //let login = await db.login(req.body)
+})
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)

@@ -84,5 +84,11 @@ async function upload(upload)
     }
     const insertUpload = uploadsCollection.insertOne(uploadDocument)
 }
-console.log(getDateTime())
-module.exports = {login,upload}
+async function getUploads(userID)
+{
+    const uploadsCollection = client.db("mediaPlatform").collection("UPLOADS")
+    let uploads = await uploadsCollection.find({userID: userID}).toArray()
+    return uploads
+}
+
+module.exports = {login, upload, getUploads}

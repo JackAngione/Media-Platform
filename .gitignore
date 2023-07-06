@@ -12,3 +12,4 @@ SERVERCODE/databaseServer/mongoDBconnection.js
 *.mp4
 /SERVERCODE/uploadServer/uploads/
 /SERVERCODE/uploadServer/uploads/chunks/
+/ServerFiles/USERS/
