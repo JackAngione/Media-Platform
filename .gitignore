@@ -13,3 +13,4 @@ SERVERCODE/databaseServer/mongoDBconnection.js
 /SERVERCODE/uploadServer/uploads/
 /SERVERCODE/uploadServer/uploads/chunks/
 /ServerFiles/USERS/
+SERVERCODE/databaseServer/mongoDBconnection.js

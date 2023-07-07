@@ -1,6 +1,6 @@
 import * as React from "react";
-import { invoke } from "@tauri-apps/api/tauri";
-import "../Login.css";
+import Cookies from 'js-cookie';
+import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import {useState} from "react";
 import axios from "axios";
@@ -12,25 +12,25 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-
+    //send login credentials to the server to get back JWT
     async function initLogin() {
-        let loginStatus;
-        /*RUST LOGIN
-        loginStatus = await invoke("rustlogin", {email, password}).then((message) => {return message});
-        console.log(loginStatus)
-         */
+
         let inputs = {"email": email, "password": password}
+        //make post request
         axios.post(serverAddress + "/api/login", inputs)
             .then(response=> {
-                console.log(response.data.success)
-                if(response.data.success)
+                if(response.status !== 401)
                 {
                     console.log("successful login!!!! yayaya")
-                    navigate("/homepage");
+                    const token = response.data.token; // Ensure your server sends the JWT as "token" in the response body
+
+                    // Save JWT to cookies, you can set the number of days until the JWT will expire
+                    Cookies.set('jwt', token, { expires: 7 }); // The JWT will expire after 7 days
+                    navigate("/");
                 }
                 else
                 {
-                    console.log("LOGIN FAILED:" + response.data.success)
+                    console.log("LOGIN FAILED:")
                     setLoginFail("Login Failed")
                 }
             })

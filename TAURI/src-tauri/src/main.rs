@@ -1,4 +1,3 @@
-mod upload_file;
 mod download_file;
 
 
@@ -12,7 +11,7 @@ mod download_file;
 fn main() {
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![upload_file::uploaddatabase, upload_file::sendfile, download_file::download_chunk])
+        .invoke_handler(tauri::generate_handler![download_file::download_chunk])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

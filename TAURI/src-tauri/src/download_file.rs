@@ -20,14 +20,15 @@ pub async fn download_chunk(user_id: String, upload_id: String)
     println!("total chunks: {}", total_chunks);
     let client = reqwest::Client::new();
     let mut map = HashMap::new();
-    map.insert("userID", user_id);
-    map.insert("uploadID", upload_id);
+    map.insert("userID", user_id.clone());
+    map.insert("uploadID", upload_id.clone());
+
     map.insert("needed_chunk", current_chunk.to_string());
     let mut file = OpenOptions::new()
         .write(true)
         .create(true)
         .append(true)
-        .open("ITDOWNLOADED!.mp4") // Replace with your file path
+        .open(format!("../../{}/uploads/{}", user_id, upload_id)) // Replace with your file path
         .unwrap();
 
     //request the next chunk until all chunks have been requested
@@ -49,9 +50,9 @@ pub async fn download_chunk(user_id: String, upload_id: String)
 
 
 
-
-        map.insert("needed_chunk", (map["needed_chunk"].parse::<i32>().unwrap() + 1).to_string());
         current_chunk += 1;
+        map.insert("needed_chunk", current_chunk.to_string());
+
     }
 }
 

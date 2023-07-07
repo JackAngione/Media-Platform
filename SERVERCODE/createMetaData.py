@@ -15,7 +15,7 @@ class FileError(Exception):
     pass
 
 
-def getFileType(extension):
+def get_file_type(extension):
     extension = "." + extension
     fileTypes = {".wav": "audio", ".mp3": "audio", ".aac": "audio", ".flac": "audio",
                  ".mp4": "video", ".mkv": "video", ",mov": "video",
@@ -25,8 +25,8 @@ def getFileType(extension):
     # photo = [".jpg", ".png", ".tiff"]
 
     try:
-        fileType = fileTypes[extension.lower()]
-        return fileType
+        file_type = fileTypes[extension.lower()]
+        return file_type
     except KeyError:
         raise FileError("Invalid FileType")
 
@@ -46,7 +46,7 @@ def uploadMetadata(db, filepath, USERID, VIDEOID, OGNAME, TITLE, DESC):
     print("FILENAME = ", FILENAME)
     kind = filetype.guess(filepath)
     FILE_EXT = kind.extension
-    FILETYPE = getFileType(FILE_EXT)
+    FILETYPE = get_file_type(FILE_EXT)
 
     fileSizePath = filepath.rsplit("\\", 1)[0]
     print("FILESIZEPATH = ", fileSizePath)
@@ -67,7 +67,7 @@ def uploadMetadata(db, filepath, USERID, VIDEOID, OGNAME, TITLE, DESC):
         "userID": f"{USERID}",
         "videoID": f"{VIDEOID}",
         "originalFilename": f"{OGNAME}",
-        "fileType": f"{FILETYPE}",
+        "file_type": f"{FILETYPE}",
         # "fileExtension": f"{FILE_EXT}",
         "title": f"{TITLE}",
         "description": f"{DESC}",
