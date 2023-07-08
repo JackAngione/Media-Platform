@@ -1,7 +1,5 @@
 import * as React from "react";
-import ReactPlayer from 'react-player'
 import "./homepage.css";
-import Login from "./routes/login"
 import {BrowserRouter as Router, Route, Link, Routes} from "react-router-dom";
 import "./navigationBar.css"
 
@@ -14,13 +12,13 @@ export default function NavigationBar(){
                     <Link className ="mainDropdown" >test</Link>
                     <div className="dropDownList">
                         <Link to="/login"> Login</Link>
-                        <Link to="/"> test </Link>
+                        <Link to="/logout"> Logout </Link>
                         <Link to="/"> test </Link>
                     </div>
                 </div>
                 |
                 <li>
-                    <Link to="/homepage"> HOME </Link>
+                    <Link to="/"> HOME </Link>
                 </li>
                 |
                 <div className="navDropdown">

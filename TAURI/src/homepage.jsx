@@ -14,7 +14,7 @@ const Homepage = () => {
                 const response = await axios.get(serverAddress+'/api/validate', {
                     headers: {
                         Authorization: `Bearer ${token}`,  // Pass JWT in Authorization header
-                    },
+                    }
                 });
                 if(response.data.isValid)
                 {
@@ -39,8 +39,8 @@ const Homepage = () => {
                 onChange={(e) => setUserName(e.currentTarget.value)}
                 placeholder="username!!"
             />
-            <button onClick={validateToken}/>
-            {tokenValid}
+            <button onClick={validateToken}> {tokenValid} </button>
+
 
         </>
     );

@@ -7,6 +7,7 @@ import UserPage from "./routes/userPage";
 import UploadPage from "./routes/uploadREGULAR.jsx";
 import "./style.css";
 import NavigationBar from "./navigation.jsx";
+import Logout from "./routes/logout.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -15,6 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Routes>
               <Route path ="/" element={<Homepage/>} />
               <Route path ="login" element={<Login/>} />
+              <Route path ="logout" element={<Logout/>} />
               <Route path ="user/:userID" element={<UserPage/>} />
               <Route path ="upload" element={<UploadPage/>} />
           </Routes>

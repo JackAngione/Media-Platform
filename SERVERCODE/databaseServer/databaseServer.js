@@ -3,8 +3,8 @@ const {JWTKey} = require("./mongoDBconnection")
 const cors = require('cors');
 const db = require("./mongoDBFuncitons.js")
 const jwt = require('jsonwebtoken');
-var { expressjwt: eJWT } = require("express-jwt");
-const {serialize} = require("mongodb");
+const {expressjwt: eJWT} = require("express-jwt");
+
 
 //JWT SECRET KEY
 const secretKey = JWTKey;
@@ -13,7 +13,9 @@ const app = express()
 app.use(cors());
 app.use(express.json());
 app.use(function (err, req, res, next) {
-    if (err.name === 'UnauthorizedError') {  // expressJwt throws UnauthorizedError for invalid tokens
+    //returns true if token is valid aka not blacklisted
+    let blacklist_check =db.verify_token()
+    if (err.name === 'UnauthorizedError' || blacklist_check === false) {  // expressJwt throws UnauthorizedError for invalid tokens
         res.send({ isValid: false });
     }
 });
@@ -25,7 +27,7 @@ app.post('/api/login', async (req, res) => {
     {
         console.log("login:" + user_id)
         //sign JWT with userID, returned from login function
-        const token = jwt.sign({ id: user_id}, secretKey, {
+        const token = jwt.sign({ user_id: user_id}, secretKey, {
             expiresIn: '1h' // Token expires in 1 hour
         });
         res.send({ token });
@@ -33,15 +35,35 @@ app.post('/api/login', async (req, res) => {
     else
     {
         //TODO RETURN ERROR NO LOGIN
-
+        // User is not authenticated
+        res.status(401).send('Invalid credentials');
+    }
+})
+//user logout
+app.post('/api/logout', eJWT({ secret: secretKey, algorithms: ['HS256'] }), async (req, res) => {
+    console.log("logout request made")
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+    let logout = await db.logout(token)
+    if(logout)
+    {
+        res.send("")
+    }
+    else
+    {
+        //TODO RETURN ERROR NO LOGIN
         // User is not authenticated
         res.status(401).send('Invalid credentials');
     }
 })
 // JWT validation
 app.get('/api/validate', eJWT({ secret: secretKey, algorithms: ['HS256'] }), (req, res) => {
+    console.log("verifying jwt")
     // If expressJwt middleware does not throw an error, the token is valid
-    res.send({ isValid: true });
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+    let check = db.verify_token(token)
+    res.send({ isValid: check });
 });
 
 

@@ -3,9 +3,10 @@ const { MongoClient } = require('mongodb');
 const crypto = require('crypto');
 const { format } = require('date-fns');
 const { utcToZonedTime } = require('date-fns-tz');
-
+const jwt = require('jsonwebtoken');
+const {JWTKey} = require("./mongoDBconnection")
 const client = new MongoClient(connectionString)
-
+const moment = require('moment');
 
 //get current UTC formatted date and time "YYYY-MM-DD
 function getDateTime() {
@@ -50,15 +51,13 @@ async function login(credentials)
 {
     console.log("email:" + credentials.email)
     console.log("password:" + credentials.password)
-    console.log("hased password:" + sha256Hash(credentials.password))
+    console.log("hashed password:" + sha256Hash(credentials.password))
     const hashedPassword = sha256Hash(credentials.password)
-    console.log(connectionString)
+
     const usersCollection = client.db("mediaPlatform").collection("USERS")
-    const account = usersCollection.findOne({"email": credentials.email, "password": hashedPassword})
+     const account = await usersCollection.findOne({"email": credentials.email, "password": hashedPassword})
     if(account)
     {
-        //TODO return a login token
-        console.log("account found")
         return account.userID
     }
     else
@@ -66,6 +65,48 @@ async function login(credentials)
         console.log("account NOT found")
         return ""
     }
+}
+async function logout(token)
+{
+    let decoded_token = jwt.decode(token)
+    let expirationDate = moment.unix(decoded_token.exp).utc()
+    // You can format the date however you like
+    expirationDate = expirationDate.format('YYYY-MM-DD, HH:mm:ss');
+    //BLACKLISTED TOKENS COLLECTION
+    const blt_collection = client.db("mediaPlatform").collection("BLACKLISTED_TOKENS")
+    //check if token is valid
+    let valid_token = verify_token(token)
+
+    //blacklists the token by inserting it into the blacklisted database
+    const blacklisted_token = await blt_collection.insertOne({
+            "token": token,
+            "expiration": expirationDate
+        })
+    return true
+
+}
+//checks if token is valid and not blacklisted
+async function verify_token(token)
+{
+    //verifies the token against the secret key
+    try {
+        const verified = jwt.verify(token, JWTKey)
+        //check if token is blacklisted
+        const blt_collection = client.db("mediaPlatform").collection("BLACKLISTED_TOKENS")
+        const blacklisted_token = await blt_collection.findOne({
+            "token": token
+        })
+        return !blacklisted_token && verified;
+    }
+    catch (e) {
+        console.log("token is not valid")
+        console.error(e)
+        return false
+    }
+
+
+
+
 }
 //add an upload to the database
 async function upload(upload)
@@ -91,4 +132,4 @@ async function getUploads(userID)
     return uploads
 }
 
-module.exports = {login, upload, getUploads}
+module.exports = {login, logout, upload, getUploads, verify_token}
