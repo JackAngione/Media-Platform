@@ -20,7 +20,7 @@ async function generateVideoID(userID) {
     let uploadID = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
     const charactersLength = characters.length;
-    let repeatCheck = 2
+    let repeatCheck = 1
     while(repeatCheck > 0)
     {
         uploadID = ""
@@ -41,7 +41,7 @@ function sha256Hash(input) {
 function getFileType(extension)
 {
     console.log("file extension:" + extension)
-    const fileTypes = {"wav": "audio", "mp3": "audio", "aac": "audio", "flac": "audio", "ogg": "audio",
+    const fileTypes = {"wav": "audio", "mp3": "audio", "aac": "audio", "flac": "audio",
         "mp4": "video", "mkv": "video", "mov": "video",
         "jpg": "photo", "png": "photo", "tiff": "photo"}
     return fileTypes[extension]
@@ -90,12 +90,14 @@ async function verify_token(token)
 {
     //verifies the token against the secret key
     try {
+        console.log("JWT TOKEN IS: " + token)
         const verified = jwt.verify(token, JWTKey)
         //check if token is blacklisted
         const blt_collection = client.db("mediaPlatform").collection("BLACKLISTED_TOKENS")
         const blacklisted_token = await blt_collection.findOne({
             "token": token
         })
+        console.log("token is valid!")
         return !blacklisted_token && verified;
     }
     catch (e) {
@@ -104,18 +106,15 @@ async function verify_token(token)
         return false
     }
 
-
-
-
 }
 //add an upload to the database
 async function upload(upload)
 {
     const uploadsCollection = client.db("mediaPlatform").collection("UPLOADS")
-    const uploadID = await generateVideoID(upload.userID)
+    const upload_id = await generateVideoID(upload.userID)
     const uploadDocument = {
         userID: upload.userID,
-        uploadID: uploadID,
+        uploadID: upload_id,
         originalFilename: upload.originalFilename,
         fileType: getFileType(upload.fileType),
         fileSize: upload.fileSize,
@@ -123,13 +122,13 @@ async function upload(upload)
         description: upload.description,
         uploadDate: getDateTime()
     }
-    const insertUpload = uploadsCollection.insertOne(uploadDocument)
+    await uploadsCollection.insertOne(uploadDocument);
+    return upload_id
 }
 async function getUploads(userID)
 {
     const uploadsCollection = client.db("mediaPlatform").collection("UPLOADS")
-    let uploads = await uploadsCollection.find({userID: userID}).toArray()
-    return uploads
+    return await uploadsCollection.find({userID: userID}).toArray()
 }
 
 module.exports = {login, logout, upload, getUploads, verify_token}

@@ -1,18 +1,42 @@
 import * as React from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import {useEffect, useRef, useState} from "react";
-import {Form, json} from "react-router-dom";
+import jwt_decode from 'jwt-decode';
 import axios from "axios";
 import {serverAddress} from "../serverInfo.js";
+import Cookies from "js-cookie";
+import {useNavigate} from "react-router-dom";
 const UploadPage = () => {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [fileSize, setFileSize] = useState("")
     const [originalFilename, setOriginalFilename] = useState("")
     const [fileExt, setFileExt] = useState("")
+    const [user_id, setUser_id] = useState("")
+    const [upload_id, setUpload_id] = useState("")
 
+    const navigate = useNavigate();
+    //on page load, get the logged-in user id from JWT
+    useEffect(() => {
+        try {
+            const token = Cookies.get('jwt');  // Get JWT from cookies
+            setUser_id(jwt_decode(token).user_id)
+        }
+        catch (e) {
+            console.log("error getting userid")
+        }
+    }, []);
+    //
+    useEffect( () => {
+        if(upload_id !== "")
+        {
+            uploadFile().then((r) => {
+                navigate("/")
+            })
+        }
+    }, [upload_id]);
 
-    const CHUNK_SIZE = 100000000; // 100 MB
+    const CHUNK_SIZE = 10 * 1024 * 1024; // 10 MB
     const [file, setFile] = useState();
 
     //CONVERTS BYTES TO FORMATTED STRING SIZE
@@ -36,7 +60,7 @@ const UploadPage = () => {
     async function uploadToDatabase()
     {
         let jsonData = {
-            userID: "",
+            userID: user_id,
             uploadID: "",
             originalFilename: originalFilename,
             fileType: fileExt,
@@ -45,8 +69,15 @@ const UploadPage = () => {
             fileSize: fileSize,
             uploadDate: ""
         }
-        axios.post(serverAddress+"/api/upload", jsonData)
+        const token = Cookies.get('jwt');  // Get JWT from cookies
+        await axios.post(serverAddress + "/api/upload", jsonData, {
+            headers: {
+                authorization: `Bearer ${token}`,  // Pass JWT in Authorization header
+            }
+        })
             .then(function (response) {
+                console.log("database uploaded")
+                setUpload_id(response.data.upload_id)
             })
     }
     //SEND FILE BYTES TO UPLOAD SERVER
@@ -69,6 +100,8 @@ const UploadPage = () => {
             console.log("sent " + i + " chunk")
             const chunk = chunks[i];
             const formData = new FormData();
+            formData.append('user_id', user_id);
+            formData.append('upload_id', upload_id);
             formData.append('chunk', chunk, file.name);
             formData.append('chunkNumber', i);
             formData.append('totalChunks', chunks.length-1);
@@ -84,12 +117,15 @@ const UploadPage = () => {
     const submitUpload =  async (event) => {
         event.preventDefault();
         await uploadToDatabase()
-        uploadFile().then(r => console.log("done"));
     }
 
     return(
         <>
-            <input type="file" id="fileInput"onChange={handleFileChange} />
+            <input type="file"
+                   accept= ".wav, .aac, .flac, .mp3,
+                            .jpg, .png, .tiff
+                            .mp4, .mov, .mkv"
+                   id="fileInput" onChange={handleFileChange} />
             <p></p>
             <form onSubmit={submitUpload}>
                 <label>Enter Title:
@@ -102,7 +138,7 @@ const UploadPage = () => {
                     />
                 </label>
                 <label>Enter Description:
-                    <input
+                    <textarea
                         type="text"
                         name="description"
                         value={description || ""}
@@ -113,6 +149,7 @@ const UploadPage = () => {
 
                 <input type="submit" />
             </form>
+            <p>{"User_id: " + user_id}</p>
             <p>{"title: " + title}</p>
             <p>{"Description: " + description}</p>
             <p>{"File Size: " + fileSize}</p>

@@ -4,30 +4,36 @@ const multer = require('multer');
 const cors = require('cors');
 const path = require("path");
 
-
 const app = express();
-
 const upload = multer();
+
 app.use(express.json())
-//app.use(bodyParser.raw({type: "application/octet-stream", limit: "200mb"}))
 app.use(cors({origin: "http://localhost:1420"}));
+
+const chunkSize = 10 * 1024 * 1024; // 100MB in bytes
 
 app.post("/upload", upload.array('chunk', 1), async (req, res) => {
     console.log("connected")
     const chunk = req.files[0].buffer;
+    const upload_id = req.body.upload_id
+    const user_id = req.body.user_id
     const chunkNumber = req.body.chunkNumber;
     const totalChunks = req.body.totalChunks;
     const fileName = req.files[0].originalname;
-    const chunkPath = path.resolve("./uploads", 'chunks', `${fileName}`);
-    console.log(chunk)
+    console.log("userid: " + user_id + " upload_id: " + upload_id)
+    const chunkPath = `../../ServerFiles/USERS/${user_id}/UPLOADS/${upload_id}`;
+    console.log("path: " + chunkPath)
+    ///console.log(chunk)
     console.log("name: " + fileName)
     console.log("chunkNumber: " + chunkNumber)
     console.log("totalChunks: " + totalChunks)
-
-    if (!fs.existsSync(path.resolve("./uploads", 'chunks')))
+    /*
+    if (!fs.existsSync(chunkPath))
     {
-        fs.mkdirSync(path.resolve("./uploads", 'chunks'));
+        fs.mkdirSync(chunkPath);
     }
+
+     */
     let writeStream = fs.createWriteStream(chunkPath, {flags: "a"})
     await Promise.all([
         new Promise(resolve => writeStream.once('open', resolve)),
@@ -47,13 +53,10 @@ app.post("/upload", upload.array('chunk', 1), async (req, res) => {
 })
 
 app.post("/download", async (req, res) => {
-
     let uploadID = req.body.uploadID
     let userID =  req.body.userID
     let currentChunk = req.body.needed_chunk
-    //const chunkSize = 100 * 1024 * 1024; // 100MB in bytes
-    const chunkSize = 100 * 1024 * 1024; // 100MB in bytes
-    let chunk_data = ""
+
     let chunkStart = chunkSize * currentChunk
     const chunkEnd = chunkStart + chunkSize
     if(currentChunk>=1)
@@ -68,12 +71,11 @@ app.post("/download", async (req, res) => {
         readStream.pipe(res);
 
     });
-    //console.log("DATA: " + chunk_data)
+
     readStream.on('end', function() {
-        //res.send(chunk_data)
         console.log('sent chunk: ' + currentChunk);
     });
-    //res.send("sent: " + JSON.stringify(req.body))
+
 })
 
 //returns the total chunk count needed to completely download a file
@@ -81,9 +83,6 @@ app.post("/getChunkCount", async (req, res) => {
     //console.log("CURRENT DIRECTORY: " + path.resolve(process.cwd(), '..', '..'));
     let uploadID = req.body.uploadID
     let userID =  req.body.userID
-
-    const chunkSize = 100 * 1024 * 1024; // 100MB in bytes
-
 
     let fileSize = fs.statSync(`../../ServerFiles/USERS/${userID}/UPLOADS/${uploadID}`).size;
     console.log("file size: " + fileSize)
