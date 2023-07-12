@@ -1,12 +1,14 @@
-#loginDiv{
-    position: absolute;
-    top: 70%;
-    left: 50%;
+#loginDiv
+{
     display: flex;
-    transform: translate(-50%, -50%);
-    border: 2px solid black;
-    height: 60px;
-        
+    flex-direction: column;
+    justify-content: center;  /* Align horizontally */
+    align-items: center;      /* Align vertically */
+    height:80vh;            /* Full height of the viewport */
+}
+#loginDiv input
+{
+    margin-bottom: 10px;
 }
 #email-login{
     margin-right: 10px;

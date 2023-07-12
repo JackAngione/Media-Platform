@@ -14,23 +14,41 @@ function getDateTime() {
     const utcDate = utcToZonedTime(now, 'Etc/UTC');
     return format(utcDate, 'MM-dd-yyyy, HH:mm:ss');
 }
-//GENERATES A VIDEOID FOR AN UPLOAD
-async function generateVideoID(userID) {
-    const uploadsCollection = client.db("mediaPlatform").collection("UPLOADS")
-    let uploadID = '';
+//GENERATE USER_ID for a new user
+async function generateUserID() {
+    const userCollection = client.db("mediaPlatform").collection("USERS")
+    let user_ID = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
     const charactersLength = characters.length;
     let repeatCheck = 1
     while(repeatCheck > 0)
     {
-        uploadID = ""
+        user_ID = ""
         for (let i = 0; i < 7; i++) {
-            uploadID += characters.charAt(Math.floor(Math.random() * charactersLength));
+            user_ID += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
-        repeatCheck = await uploadsCollection.countDocuments({userID: "xxxxxxx", uploadID: uploadID})
+        repeatCheck = await userCollection.countDocuments({userID: user_ID})
         console.log("repeat check" + repeatCheck)
     }
-    return uploadID
+    return user_ID
+}
+//GENERATES A VIDEO_ID FOR AN UPLOAD
+async function generateVideoID(userID) {
+    const uploadsCollection = client.db("mediaPlatform").collection("UPLOADS")
+    let upload_ID = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+    const charactersLength = characters.length;
+    let repeatCheck = 1
+    while(repeatCheck > 0)
+    {
+        upload_ID = ""
+        for (let i = 0; i < 7; i++) {
+            upload_ID += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        repeatCheck = await uploadsCollection.countDocuments({userID: "xxxxxxx", uploadID: upload_ID})
+        console.log("repeat check" + repeatCheck)
+    }
+    return upload_ID
 }
 function sha256Hash(input) {
     const hash = crypto.createHash('sha256');
@@ -46,7 +64,41 @@ function getFileType(extension)
         "jpg": "photo", "png": "photo", "tiff": "photo"}
     return fileTypes[extension]
 }
-//INSERT CATEGORY INTO DATABASE
+
+//createa account
+async function createAccount(userInfo)
+{
+    //console.log("email:" + credentials.email)
+    const hashed_password = sha256Hash(userInfo.password)
+    const user_id = await generateUserID()
+    const creation_date = moment.utc().format('YYYY-MM-DD, HH:mm:ss');
+
+    //CHECK IF EMAIL IS ALREADY IN USE
+    const usersCollection = client.db("mediaPlatform").collection("USERS")
+    const account = await usersCollection.findOne({"email": userInfo.email})
+    //if account with provided email already exists
+    if(account)
+    {
+        //email already exists
+        console.log("email already exists")
+        return false
+    }
+
+    else
+    {
+        //insert new account into database
+        const new_account = await usersCollection.insertOne({
+            "userID": user_id,
+            "username": userInfo.username,
+            "email": userInfo.email,
+            "password": hashed_password,
+            "creationDate": creation_date
+        })
+        return true
+    }
+
+}
+//login
 async function login(credentials)
 {
     console.log("email:" + credentials.email)
@@ -55,7 +107,7 @@ async function login(credentials)
     const hashedPassword = sha256Hash(credentials.password)
 
     const usersCollection = client.db("mediaPlatform").collection("USERS")
-     const account = await usersCollection.findOne({"email": credentials.email, "password": hashedPassword})
+    const account = await usersCollection.findOne({"email": credentials.email, "password": hashedPassword})
     if(account)
     {
         return account.userID
@@ -102,7 +154,7 @@ async function verify_token(token)
     }
     catch (e) {
         console.log("token is not valid")
-        console.error(e)
+        //console.error(e)
         return false
     }
 
@@ -131,4 +183,4 @@ async function getUploads(userID)
     return await uploadsCollection.find({userID: userID}).toArray()
 }
 
-module.exports = {login, logout, upload, getUploads, verify_token}
+module.exports = {createAccount, login, logout, upload, getUploads, verify_token}

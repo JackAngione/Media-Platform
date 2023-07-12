@@ -11,6 +11,7 @@ export default function NavigationBar(){
                 <div className="navDropdown">
                     <Link className ="mainDropdown" >test</Link>
                     <div className="dropDownList">
+                        <Link to="create_account"> Create Account</Link>
                         <Link to="/login"> Login</Link>
                         <Link to="/logout"> Logout </Link>
                         <Link to="/"> test </Link>

@@ -21,6 +21,26 @@ app.use(function (err, req, res, next) {
         res.send({ isValid: false });
     }
 });
+
+//create account
+app.post('/api/createAccount', async (req, res) => {
+    console.log("creating account")
+    //returns true if account successfully created, false if not
+    let new_user = await db.createAccount(req.body)
+    //successfully created user
+    if(new_user)
+    {
+        res.status(201).send()
+    }
+    else
+    {
+        //send status 409 to indicate email is taken
+        console.log("sending 409 error")
+        res.status(409).send()
+    }
+
+})
+
 //user login
 app.post('/api/login', async (req, res) => {
     console.log("login request made")
@@ -49,7 +69,7 @@ app.post('/api/logout', eJWT({ secret: secretKey, algorithms: ['HS256'] }), asyn
     let logout = await db.logout(token)
     if(logout)
     {
-        res.send("")
+        res.send("logout successful")
     }
     else
     {
@@ -59,25 +79,20 @@ app.post('/api/logout', eJWT({ secret: secretKey, algorithms: ['HS256'] }), asyn
     }
 })
 // JWT validation
-const verifyToken = (req, res, next) => {
+async function verifyToken(req) {
     console.log("verifying jwt")
     // If expressJwt middleware does not throw an error, the token is valid
     const authHeader = req.headers['authorization'];
     const token = authHeader.split(' ')[1]; // Bearer <token>
-    let check = db.verify_token(token)
-    if(check)
-    {
-        return true
-    }
-
+    let check = await db.verify_token(token)
+    return check;
     //res.send({ isValid: check });
 }
 
 
-
 //upload a file to the database
 app.post('/api/upload', async (req, res) => {
-    if(verifyToken)
+    if(await verifyToken(req))
     {
         console.log("upload request made")
         let upload_id = await db.upload(req.body)

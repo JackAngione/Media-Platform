@@ -1,0 +1,18 @@
+#createAccountDiv
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* Align horizontally */
+    align-items: center;      /* Align vertically */
+    height:80vh;            /* Full height of the viewport */
+}
+
+#createAccountDiv input
+{
+    margin-bottom: 10px;
+}
+
+#errorText
+{
+    color: red;
+}

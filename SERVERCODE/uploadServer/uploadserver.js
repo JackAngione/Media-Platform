@@ -27,13 +27,14 @@ app.post("/upload", upload.array('chunk', 1), async (req, res) => {
     console.log("name: " + fileName)
     console.log("chunkNumber: " + chunkNumber)
     console.log("totalChunks: " + totalChunks)
-    /*
-    if (!fs.existsSync(chunkPath))
+
+    //create the user's upload folder if it doesn't exist
+    if (!fs.existsSync(`../../ServerFiles/USERS/${user_id}/UPLOADS/`))
     {
-        fs.mkdirSync(chunkPath);
+        fs.mkdirSync(`../../ServerFiles/USERS/${user_id}/UPLOADS/`, { recursive: true });
     }
 
-     */
+
     let writeStream = fs.createWriteStream(chunkPath, {flags: "a"})
     await Promise.all([
         new Promise(resolve => writeStream.once('open', resolve)),
