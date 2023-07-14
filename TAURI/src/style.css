@@ -32,11 +32,24 @@ button {
 button {
   cursor: pointer;
 }
+body {
+  margin: 0;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
 
-@media (prefers-color-scheme: dark) {
+  color: #BF1363;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  color: #ff8bc2;
+}
+@media (prefers-color-scheme: light) {
   :root {
     color: #f6f6f6;
-    background-color: #131313;
+    background-color: #f6f6f6;
   }
 
 }

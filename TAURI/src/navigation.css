@@ -1,8 +1,5 @@
 .navigation
 {
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: row;
     list-style: none;
@@ -10,7 +7,7 @@
     justify-content: center;
     color: #BF1363;
     z-index: 1;
-    background-color: #FBFEF9;
+    background-color: #f6f6f6;
     border-radius: 5px;
 }
 .navigationDark

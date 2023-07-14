@@ -177,10 +177,19 @@ async function upload(upload)
     await uploadsCollection.insertOne(uploadDocument);
     return upload_id
 }
+//get all uploads for a specific user
 async function getUploads(userID)
 {
     const uploadsCollection = client.db("mediaPlatform").collection("UPLOADS")
     return await uploadsCollection.find({userID: userID}).toArray()
 }
+//get a user's profile information
+async function getProfile(user_id)
+{
+    const uploadsCollection = client.db("mediaPlatform").collection("USERS")
+    let full_profile = await uploadsCollection.findOne({userID: user_id})
+    let profile = {"username": full_profile.username, "email": full_profile.email, "creationDate": full_profile.creationDate}
+    return profile;
+}
 
-module.exports = {createAccount, login, logout, upload, getUploads, verify_token}
+module.exports = {createAccount, login, logout, upload, getUploads, getProfile, verify_token}

@@ -103,13 +103,21 @@ app.post('/api/upload', async (req, res) => {
 })
 //get all uploads of a specific user
 app.get('/api/userUpoads', async (req, res) => {
-    const userID = req.query.userID
-    console.log("userID = " + userID)
-    let uploads = await db.getUploads(userID)
+    const user_id = req.query.userID
+    console.log("userID = " + user_id)
+    let uploads = await db.getUploads(user_id)
     res.send(uploads)
     //let login = await db.login(req.body)
 })
-
+//get profile information for a user
+app.get('/api/user/:user_id', async (req, res) => {
+    const user_id = req.params.user_id
+    console.log("userID = " + user_id)
+    let profile = await db.getProfile(user_id)
+    let uploads = await db.getUploads(user_id)
+    let final_profile = {"profile": profile, "uploads": uploads}
+    res.send(final_profile)
+})
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
 })

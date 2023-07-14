@@ -27,7 +27,7 @@ export default function UserPage(props) {
     }
     async function getUserUploads(videoID)
     {
-        axios.get(serverAddress + '/api/userUpoads', {
+        await axios.get(serverAddress + '/api/userUpoads', {
             params: {
                 userID: searchUsername
             }

@@ -1,7 +1,8 @@
 import * as React from "react";
 import "./homepage.css";
 import {BrowserRouter as Router, Route, Link, Routes} from "react-router-dom";
-import "./navigationBar.css"
+import "./navigation.css"
+import myProfile from "./routes/profile.jsx";
 
 export default function NavigationBar(){
 
@@ -14,6 +15,7 @@ export default function NavigationBar(){
                         <Link to="create_account"> Create Account</Link>
                         <Link to="/login"> Login</Link>
                         <Link to="/logout"> Logout </Link>
+                        <Link to="my_profile">My Profile</Link>
                         <Link to="/"> test </Link>
                     </div>
                 </div>
@@ -30,8 +32,6 @@ export default function NavigationBar(){
                     </div>
                 </div>
             </nav>
-
-
         </>
     );
 }
