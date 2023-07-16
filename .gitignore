@@ -13,5 +13,5 @@ SERVERCODE/databaseServer/mongoDBconnection.js
 /SERVERCODE/uploadServer/uploads/
 /SERVERCODE/uploadServer/uploads/chunks/
 /ServerFiles/USERS/
-SERVERCODE/databaseServer/mongoDBconnection.js
 scratch_notes.txt
+/TAURI/downloaded_files/
