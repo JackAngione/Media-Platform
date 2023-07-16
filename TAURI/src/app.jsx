@@ -7,7 +7,7 @@ import Profile from "./routes/profile.jsx";
 import CreateAccount from "./routes/createAccount.jsx";
 import UserPage from "./routes/userPage.jsx";
 import UploadPage from "./routes/uploadREGULAR.jsx";
-
+import ViewDownloads from "./routes/viewDownloads.jsx";
 function App() {
     return (
         <>
@@ -21,6 +21,7 @@ function App() {
                         <Route path="create_account" element={<CreateAccount/>}/>
                         <Route path ="user/:userID" element={<UserPage/>} />
                         <Route path ="upload" element={<UploadPage/>} />
+                        <Route path ="viewDownloads" element={<ViewDownloads/>} />
                     </Routes>
             </BrowserRouter>
         </>

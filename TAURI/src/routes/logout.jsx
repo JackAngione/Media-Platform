@@ -14,14 +14,14 @@ const Logout = () => {
     async function logout()
     {
         const token = Cookies.get('jwt');  // Get JWT from cookies
-        Cookies.remove('jwt')
+
         //make post request
         await axios.post(serverAddress + "/api/logout", {},{headers: {
                 Authorization: `Bearer ${token}`,  // Pass JWT in Authorization header
             }})
             .then(response=> {
                 //remove cookie
-
+                Cookies.remove('jwt')
                 //redirect to log in page
                 navigate("/login");
 

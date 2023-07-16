@@ -1,5 +1,3 @@
-import {useLoaderData, useParams} from "react-router-dom";
-import {invoke} from "@tauri-apps/api/tauri";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import "./profile.css";
@@ -31,10 +29,13 @@ export default function Profile() {
     useEffect( () => {
         if(user_id === "")
         {
-            const token = Cookies.get('jwt');  // Get JWT from cookies
-            setUser_id(jwtDecode(token).user_id)
+            try {
+                const token = Cookies.get('jwt');  // Get JWT from cookies
+                setUser_id(jwtDecode(token).user_id)
+            } catch (e) {
+                console.log("cannot retrieve jwt, not signed in")
+            }
         }
-
     },[]);
     function ProfileData()
     {
@@ -49,7 +50,6 @@ export default function Profile() {
                     <h1>User: {userProfile.profile?.username}</h1>
                     <h1>Email: {userProfile.profile?.email}</h1>
                     <h1>Creation Date: {userProfile.profile?.creationDate}</h1>
-                    <h1>My uploads:</h1>
                 </>
             )
         }
@@ -61,9 +61,7 @@ export default function Profile() {
 
     return (
             <>
-                <h1>User: {userProfile.profile?.username}</h1>
-                <h1>Email: {userProfile.profile?.email}</h1>
-                <h1>Creation Date: {userProfile.profile?.creationDate}</h1>
+                <ProfileData/>
 
 
                 <p>UPLOADS:</p>

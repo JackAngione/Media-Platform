@@ -15,10 +15,10 @@ struct ChunkInfo {
 #[tauri::command(rename_all = "snake_case")]
 pub async fn download_chunk(user_id: String, upload_id: String) {
     //create path for file to download to
-    let path_string = format!("../{}/uploads/{}", user_id, upload_id);
+    let path_string = format!("../downloaded_files/{}/{}.jack", user_id, upload_id);
     let download_path = Path::new(&path_string);
 
-    let total_chunks = get_chunk_count().await;
+    let total_chunks = get_chunk_count(&user_id, &upload_id).await;
     let mut current_chunk = 0;
     println!("total chunks: {}", total_chunks);
     let client = reqwest::Client::new();
@@ -69,14 +69,14 @@ pub async fn download_chunk(user_id: String, upload_id: String) {
 }
 
 //WRITE A FUNCTION THAT ONLY SENDS A GET REQUEST TO GET THE TOTAL AMOUNT OF CHUNKS NEEDED TO DOWNLOAD A FILE
-async fn get_chunk_count() -> i32 {
+async fn get_chunk_count(userID: &str, uploadID: &str) -> i32 {
     //initialize http client
     let client = reqwest::Client::new();
 
     //using hashmap to create json format, recommended by reqwest documentation
     let mut map = HashMap::new();
-    map.insert("userID", "xxxxxxx");
-    map.insert("uploadID", "xKNEhVF");
+    map.insert("userID", userID);
+    map.insert("uploadID", uploadID);
 
     //send post request
     let res = client

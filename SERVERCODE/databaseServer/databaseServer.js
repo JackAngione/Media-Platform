@@ -62,21 +62,25 @@ app.post('/api/login', async (req, res) => {
     }
 })
 //user logout
-app.post('/api/logout', eJWT({ secret: secretKey, algorithms: ['HS256'] }), async (req, res) => {
+app.post('/api/logout', async (req, res) => {
     console.log("logout request made")
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
-    let logout = await db.logout(token)
-    if(logout)
+    if(await verifyToken(req))
     {
-        res.send("logout successful")
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+        let logout = await db.logout(token)
+        if(logout)
+        {
+            res.send("logout successful")
+        }
+        else
+        {
+            //TODO RETURN ERROR NO LOGIN
+            // User is not authenticated
+            res.status(401).send('Invalid credentials');
+        }
     }
-    else
-    {
-        //TODO RETURN ERROR NO LOGIN
-        // User is not authenticated
-        res.status(401).send('Invalid credentials');
-    }
+
 })
 // JWT validation
 async function verifyToken(req) {
@@ -89,7 +93,6 @@ async function verifyToken(req) {
     //res.send({ isValid: check });
 }
 
-
 //upload a file to the database
 app.post('/api/upload', async (req, res) => {
     if(await verifyToken(req))
@@ -99,7 +102,6 @@ app.post('/api/upload', async (req, res) => {
         console.log("successful upload! upload_id = " + upload_id)
         res.send({upload_id: upload_id})
     }
-
 })
 //get all uploads of a specific user
 app.get('/api/userUpoads', async (req, res) => {

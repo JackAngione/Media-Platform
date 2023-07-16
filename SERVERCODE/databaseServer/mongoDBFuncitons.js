@@ -144,6 +144,20 @@ async function verify_token(token)
     try {
         console.log("JWT TOKEN IS: " + token)
         const verified = jwt.verify(token, JWTKey)
+        const currentTime = Math.floor(Date.now() / 1000); // Get current time in seconds
+        /*
+        //Calculate time left in seconds
+        const timeLeft = verified.exp - currentTime;
+        if (timeLeft > 0) {
+            console.log("Token will expire in: ", timeLeft, " seconds.");
+            console.log("Token will expire in: ", Math.floor(timeLeft / 60), " minutes.");
+            console.log("Token will expire in: ", Math.floor(timeLeft / 60 / 60), " hours.");
+        } else {
+            console.log("Token has expired.");
+        }
+
+        */
+        //console.log('JWT will expire at: ', new Date(verified.exp * 1000));
         //check if token is blacklisted
         const blt_collection = client.db("mediaPlatform").collection("BLACKLISTED_TOKENS")
         const blacklisted_token = await blt_collection.findOne({

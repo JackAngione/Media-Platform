@@ -29,6 +29,7 @@ export default function NavigationBar(){
                     <div className="dropDownList">
                         <Link to="/upload">UPLOAD File</Link>
                         <Link to="/user/xxxxxxx">xxxxxx user page</Link>
+                        <Link to="viewDownloads">View Downloads</Link>
                     </div>
                 </div>
             </nav>

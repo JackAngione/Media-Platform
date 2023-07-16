@@ -1,4 +1,5 @@
 mod download_file;
+mod view_uploads;
 
 
 #[cfg_attr(
@@ -11,7 +12,7 @@ mod download_file;
 fn main() {
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![download_file::download_chunk])
+        .invoke_handler(tauri::generate_handler![download_file::download_chunk, view_uploads::get_user_folders, view_uploads::get_user_uploads])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
