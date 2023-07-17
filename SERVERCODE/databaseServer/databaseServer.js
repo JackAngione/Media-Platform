@@ -1,5 +1,5 @@
 const express = require("express")
-const {JWTKey} = require("./mongoDBconnection")
+const {JWTKey} = require("../secret_keys")
 const cors = require('cors');
 const db = require("./mongoDBFuncitons.js")
 const jwt = require('jsonwebtoken');

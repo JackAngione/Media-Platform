@@ -1,10 +1,10 @@
-const {connectionString} = require("./mongoDBconnection")
+const {connectionString} = require("../secret_keys")
 const { MongoClient } = require('mongodb');
 const crypto = require('crypto');
 const { format } = require('date-fns');
 const { utcToZonedTime } = require('date-fns-tz');
 const jwt = require('jsonwebtoken');
-const {JWTKey} = require("./mongoDBconnection")
+const {JWTKey} = require("../secret_keys")
 const client = new MongoClient(connectionString)
 const moment = require('moment');
 

@@ -1,21 +1,45 @@
-import {useLoaderData, useParams} from "react-router-dom";
 import {invoke} from "@tauri-apps/api/tauri";
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import "./userpage.css";
 import axios from "axios";
 import {serverAddress} from "../serverInfo.js";
-
+import { InstantSearch, SearchBox, Hits, Highlight } from 'react-instantsearch-dom';
+import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
+import Cookies from "js-cookie";
+import jwtDecode from "jwt-decode";
 export default function UserPage(props) {
     const [searchUsername, setSearchUsername] = useState("xxxxxxx");
     let [userIDJSON, setUserIDJSON] = useState("");
     let [usernameJSON, setUsernameJSON] = useState("");
     let [uploadList, setUploadList] = useState([]);
     let [uploadsJSON, setUploadsJSON] = useState([]);
+    //loads the instant search client using the default search api key
+    const searchClient = instantMeiliSearch(
+        'http://localhost:7700',
+        "eca530cb3cc8304a7c8140e50355e13ddfffb26d018b2bb1e8c2c52f35c97083",
+        {placeholderSearch: false}
+    );
+    //when the currently selected user is changed, load their uploads
+    useEffect( () => {
+        getUserUploads().then(r => {})
+    },[searchUsername]);
+    const Hit = ({ hit }) => {
+        //hit is basically a json object of the document
+        //when clicking on a username in the search box, it sets the searchusername to the userid of the user you clicked
+        return(
+        <>
+            <button onClick={()=>{
+                setSearchUsername(hit.userID)
+            }}>
+                <Highlight attribute="username" hit={hit}/>
+            </button>
+        </>
+            )
+    };
 
     async function getUserInfo()
     {
-
         setUploadsJSON(JSON.parse(uploadList))
 
         let userJSON = JSON.parse(searchUsername)
@@ -25,7 +49,7 @@ export default function UserPage(props) {
         console.log("UserID = " + userIDJSON)
         console.log("Username = " + usernameJSON)
     }
-    async function getUserUploads(videoID)
+    async function getUserUploads()
     {
         await axios.get(serverAddress + '/api/userUpoads', {
             params: {
@@ -47,17 +71,17 @@ export default function UserPage(props) {
 
     return(
         <>
-            <h1>User: {props.userID}</h1>
-            <input
-                id="userNameInput"
-                onChange={(e) => setSearchUsername(e.currentTarget.value)}
-                placeholder="username!!"
-            />
-            <button type="button" onClick={() => getUserUploads()}>
-                View User
-            </button>
-            <p>{searchUsername}</p>
-
+            <h1>User: {searchUsername}</h1>
+            <div className = "searchResults">
+                <InstantSearch
+                   indexName="users"
+                   searchClient={searchClient}
+                >
+                    <SearchBox/>
+                    <Hits hitComponent={Hit} />
+                </InstantSearch>
+            </div>
+            
             <h1>
                 UserID: {userIDJSON} _ Username:{usernameJSON}
             </h1>

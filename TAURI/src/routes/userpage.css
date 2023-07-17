@@ -3,6 +3,10 @@
     border: 2px solid black;
 
 }
+.searchResults ul
+{
+    list-style-type: none;
+}
 #list-item
 {
     display: block;

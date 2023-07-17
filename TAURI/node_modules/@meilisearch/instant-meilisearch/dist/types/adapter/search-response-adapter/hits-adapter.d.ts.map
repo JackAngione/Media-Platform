@@ -1,0 +1,1 @@
+{"version":3,"file":"hits-adapter.d.ts","sourceRoot":"","sources":["../../../../src/adapter/search-response-adapter/hits-adapter.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EACV,eAAe,EACf,4BAA4B,EAC5B,wBAAwB,EACzB,MAAM,aAAa,CAAA;AAIpB;;;;GAIG;AACH,wBAAgB,SAAS,CACvB,cAAc,EAAE,4BAA4B,GAAG;IAC7C,UAAU,EAAE,eAAe,CAAA;CAC5B,EACD,MAAM,EAAE,wBAAwB,GAC/B,GAAG,CAmCL"}

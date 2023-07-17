@@ -7,7 +7,7 @@ RUSTTEST/.idea/modules.xml
 RUSTTEST/.idea/RUSTTEST.iml
 RUSTTEST/.idea/vcs.xml
 RUSTTEST/target/.rustc_info.json
-SERVERCODE/databaseServer/mongoDBconnection.js
+SERVERCODE/secret_keys.js
 *.mkv
 *.mp4
 /SERVERCODE/uploadServer/uploads/
