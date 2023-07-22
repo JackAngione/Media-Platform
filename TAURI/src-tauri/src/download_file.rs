@@ -23,7 +23,7 @@ pub async fn download_chunk(user_id: String, upload_id: String) {
     println!("total chunks: {}", total_chunks);
     let client = reqwest::Client::new();
     let mut map = HashMap::new();
-    map.insert("userID", user_id.clone());
+    map.insert("user_id", user_id.clone());
     map.insert("uploadID", upload_id.clone());
 
     map.insert("needed_chunk", current_chunk.to_string());
@@ -69,13 +69,13 @@ pub async fn download_chunk(user_id: String, upload_id: String) {
 }
 
 //WRITE A FUNCTION THAT ONLY SENDS A GET REQUEST TO GET THE TOTAL AMOUNT OF CHUNKS NEEDED TO DOWNLOAD A FILE
-async fn get_chunk_count(userID: &str, uploadID: &str) -> i32 {
+async fn get_chunk_count(user_id: &str, uploadID: &str) -> i32 {
     //initialize http client
     let client = reqwest::Client::new();
 
     //using hashmap to create json format, recommended by reqwest documentation
     let mut map = HashMap::new();
-    map.insert("userID", userID);
+    map.insert("user_id", user_id);
     map.insert("uploadID", uploadID);
 
     //send post request

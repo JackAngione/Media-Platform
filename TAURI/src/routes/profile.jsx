@@ -19,7 +19,7 @@ export default function Profile() {
             //get profile information
             axios.get(serverAddress + `/api/user/${user_id}`, {
                 params: {
-                    userID: user_id
+                    user_id: user_id
                 }
             }).then(function (res) {
                 //console.log(JSON.stringify(res.data));
@@ -57,7 +57,7 @@ export default function Profile() {
         }
     }
 
-    function downloadFile(userID, uploadID) {
+    function downloadFile(user_id, uploadID) {
 
     }
 
@@ -75,7 +75,7 @@ export default function Profile() {
                         <li key={index} id="list-item">
 
                             videoID: {item.uploadID}  <h1><a id="titleLink" href="#" onClick={() => {}}>TITLE: {item.title}</a> </h1>
-                            <button type="button" onClick={() => downloadFile(item.userID, item.uploadID)}>
+                            <button type="button" onClick={() => downloadFile(item.user_id, item.uploadID)}>
                                 Download
                             </button>
                         </li>

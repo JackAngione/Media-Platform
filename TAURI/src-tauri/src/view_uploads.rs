@@ -26,9 +26,9 @@ pub fn get_user_folders() -> Vec<String> {
 }
 //takes in a username and searches that user's folder for all files
 #[tauri::command(rename_all = "snake_case")]
-pub fn get_user_uploads(username: &str) -> Vec<String>
+pub fn get_user_uploads(user_id: &str) -> Vec<String>
 {
-    let user_path_string = format!("../downloaded_files/{}", username);
+    let user_path_string = format!("../downloaded_files/{}", user_id);
     let path =  Path::new(&user_path_string);
     //keep a vector of the file names of each upload
     let mut uploads = Vec::new();

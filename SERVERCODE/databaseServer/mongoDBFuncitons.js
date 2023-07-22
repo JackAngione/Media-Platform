@@ -1,4 +1,4 @@
-const {connectionString} = require("../secret_keys")
+const {connectionString, meiliSearch_Master_Key} = require("../secret_keys")
 const { MongoClient } = require('mongodb');
 const crypto = require('crypto');
 const { format } = require('date-fns');
@@ -7,7 +7,13 @@ const jwt = require('jsonwebtoken');
 const {JWTKey} = require("../secret_keys")
 const client = new MongoClient(connectionString)
 const moment = require('moment');
+const { MeiliSearch } = require('meilisearch')
 
+
+const meili_client = new MeiliSearch({
+    host: 'http://0.0.0.0:7700',
+    apiKey: meiliSearch_Master_Key
+})
 //get current UTC formatted date and time "YYYY-MM-DD
 function getDateTime() {
     const now = new Date();
@@ -27,13 +33,13 @@ async function generateUserID() {
         for (let i = 0; i < 7; i++) {
             user_ID += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
-        repeatCheck = await userCollection.countDocuments({userID: user_ID})
+        repeatCheck = await userCollection.countDocuments({user_id: user_ID})
         console.log("repeat check" + repeatCheck)
     }
     return user_ID
 }
 //GENERATES A VIDEO_ID FOR AN UPLOAD
-async function generateVideoID(userID) {
+async function generateVideoID(user_id) {
     const uploadsCollection = client.db("mediaPlatform").collection("UPLOADS")
     let upload_ID = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
@@ -45,7 +51,7 @@ async function generateVideoID(userID) {
         for (let i = 0; i < 7; i++) {
             upload_ID += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
-        repeatCheck = await uploadsCollection.countDocuments({userID: "xxxxxxx", uploadID: upload_ID})
+        repeatCheck = await uploadsCollection.countDocuments({user_id: "xxxxxxx", uploadID: upload_ID})
         console.log("repeat check" + repeatCheck)
     }
     return upload_ID
@@ -86,14 +92,19 @@ async function createAccount(userInfo)
 
     else
     {
+
         //insert new account into database
-        const new_account = await usersCollection.insertOne({
-            "userID": user_id,
+        await usersCollection.insertOne({
+            "user_id": user_id,
             "username": userInfo.username,
             "email": userInfo.email,
             "password": hashed_password,
             "creationDate": creation_date
         })
+        let user_index = meili_client.index("users")
+        await user_index.addDocuments([{
+            user_id: user_id, username: userInfo.username
+        }]);
         return true
     }
 
@@ -110,7 +121,7 @@ async function login(credentials)
     const account = await usersCollection.findOne({"email": credentials.email, "password": hashedPassword})
     if(account)
     {
-        return account.userID
+        return account.user_id
     }
     else
     {
@@ -147,7 +158,7 @@ async function verify_token(token)
 {
     //verifies the token against the secret key
     try {
-        console.log("JWT TOKEN IS: " + token)
+        //console.log("JWT TOKEN IS: " + token)
         const verified = jwt.verify(token, JWTKey)
         const currentTime = Math.floor(Date.now() / 1000); // Get current time in seconds
         /*
@@ -169,11 +180,11 @@ async function verify_token(token)
         const blacklisted_token = await blt_collection.findOne({
             "token": token
         })
-        console.log("token is valid!")
+        //console.log("token is valid!")
         return !blacklisted_token && verified;
     }
     catch (e) {
-        console.log("token is not valid")
+        //console.log("token is not valid")
         //console.error(e)
         return false
     }
@@ -185,7 +196,7 @@ async function upload(upload)
     const uploadsCollection = client.db("mediaPlatform").collection("UPLOADS")
     const upload_id = await generateVideoID(upload.userID)
     const uploadDocument = {
-        userID: upload.userID,
+        user_id: upload.user_id,
         uploadID: upload_id,
         originalFilename: upload.originalFilename,
         fileType: getFileType(upload.fileType),
@@ -207,7 +218,7 @@ async function getUploads(userID)
 async function getProfile(user_id)
 {
     const uploadsCollection = client.db("mediaPlatform").collection("USERS")
-    let full_profile = await uploadsCollection.findOne({userID: user_id})
+    let full_profile = await uploadsCollection.findOne({user_id: user_id})
 
     let profile = {"username": full_profile.username, "email": full_profile.email, "creationDate": full_profile.creationDate}
     return profile;
@@ -219,7 +230,7 @@ async function editAccount(user_id, new_info)
     const uploadsCollection = client.db("mediaPlatform").collection("USERS")
     //TODO CHECK IF "OLD PASSWORD" IS THE SAME AS EXISTING PASSWORD
     //console.log("fetching " + user_id + " document")
-    let oldAccount = await uploadsCollection.findOne({userID: user_id})
+    let oldAccount = await uploadsCollection.findOne({user_id: user_id})
     if(new_info.hasOwnProperty("password"))
     {
         let hashed_old_password = sha256Hash(new_info.old_password)
@@ -238,11 +249,21 @@ async function editAccount(user_id, new_info)
         }
     }
     try{
-        //console.log("userid to upldate: " + user_id)
+        //console.log("user_id to upldate: " + user_id)
         //console.log("new info: " + JSON.stringify(new_info))
         //update user's document in database
-        await uploadsCollection.updateOne({userID: user_id}, {$set: new_info})
-        //successfully updated account
+        await uploadsCollection.updateOne({user_id: user_id}, {$set: new_info})
+        //successfully updated account in database
+
+        //if username is changed, also add change to meilisearch
+        if(new_info.hasOwnProperty("username"))
+        {
+            let user_index = meili_client.index("users")
+            await user_index.updateDocuments([{
+                user_id: user_id,
+                username: new_info.username
+            }]);
+        }
         return 201
     } catch (e) {
         //error updating database

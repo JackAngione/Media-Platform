@@ -14,17 +14,17 @@ pub async fn getuser(username: &str) -> Result<(String), (String)> {
     let client = Client::with_uri_str("mongodb://localhost:27017").await.unwrap();
     let db = client.database("mediaPlatform");
     let coll = db.collection::<Document>("USERS");
-    let filter = doc! { "userID": username };
+    let filter = doc! { "user_id": username };
     let cursor = coll.find_one(filter, None).await.unwrap();
     let mut json_data ="ERROR, USER NOT FOUND".to_string();
     match cursor
     {
         Some(ref document) => {
-            let userID = document.get_str("userID").unwrap();
+            let user_id = document.get_str("user_id").unwrap();
             let username = document.get_str("username").unwrap();
 
             json_data = json!({
-                "userID": userID,
+                "user_id": user_id,
                 "username": username,
             }).to_string();
             println!("{}", json_data);
@@ -35,7 +35,7 @@ pub async fn getuser(username: &str) -> Result<(String), (String)> {
     return Ok(json_data)
 }
 #[tauri::command]
-pub async fn getuploads(userid: &str) -> Result<(String), (String)>
+pub async fn getuploads(user_id: &str) -> Result<(String), (String)>
 {
     #[derive(Debug, Serialize, Deserialize)]
     struct Upload {
@@ -52,7 +52,7 @@ pub async fn getuploads(userid: &str) -> Result<(String), (String)>
     let coll = db.collection::<Upload>("UPLOADS");
 
 
-    let filter = doc! { "userID": userid};
+    let filter = doc! { "user_id": user_id};
     let mut cursor = coll.find(filter, None).await.expect("failed to find");
 
     while let Some(video) = cursor.try_next().await.expect("no more uploads")

@@ -30,7 +30,7 @@ export default function UserPage(props) {
         return(
         <>
             <button onClick={()=>{
-                setSearchUsername(hit.userID)
+                setSearchUsername(hit.user_id)
             }}>
                 <Highlight attribute="username" hit={hit}/>
             </button>
@@ -43,17 +43,17 @@ export default function UserPage(props) {
         setUploadsJSON(JSON.parse(uploadList))
 
         let userJSON = JSON.parse(searchUsername)
-        setUserIDJSON(userJSON.userID);
+        setUserIDJSON(userJSON.user_id);
         setUsernameJSON(userJSON.username);
         console.log(uploadsJSON)
-        console.log("UserID = " + userIDJSON)
+        console.log("user_id = " + userIDJSON)
         console.log("Username = " + usernameJSON)
     }
     async function getUserUploads()
     {
         await axios.get(serverAddress + '/api/userUpoads', {
             params: {
-                userID: searchUsername
+                user_id: searchUsername
             }
         }).then(function (res) {
                 //console.log(JSON.stringify(res.data));
@@ -83,7 +83,7 @@ export default function UserPage(props) {
             </div>
             
             <h1>
-                UserID: {userIDJSON} _ Username:{usernameJSON}
+                user_id: {userIDJSON} _ Username:{usernameJSON}
             </h1>
             <p>UPLOADS:</p>
             <ul id="uploadsList">
@@ -91,7 +91,7 @@ export default function UserPage(props) {
                     <li key={index} id="list-item">
 
                         videoID: {item.uploadID}  <h1><a id="titleLink" href="#" onClick={() => {}}>TITLE: {item.title}</a> </h1>
-                        <button type="button" onClick={() => downloadFile(item.userID, item.uploadID)}>
+                        <button type="button" onClick={() => downloadFile(item.user_id, item.uploadID)}>
                             Download
                         </button>
                     </li>

@@ -31,7 +31,7 @@ export default function EditAccount()
             //get profile information
             axios.get(serverAddress + `/api/user/${user_id}`, {
                 params: {
-                    userID: user_id
+                    user_id: user_id
                 }
             }).then(function (res) {
 
@@ -122,7 +122,7 @@ export default function EditAccount()
                 }
             })
                 .then(response=> {
-                    if(response.status === 200)
+                    if(response.status === 201)
                     {
                       navigate("/my_profile")
                     }

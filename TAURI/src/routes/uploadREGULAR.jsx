@@ -23,7 +23,7 @@ const UploadPage = () => {
             setUser_id(jwt_decode(token).user_id)
         }
         catch (e) {
-            console.log("error getting userid")
+            console.log("error getting user_id")
         }
     }, []);
     //
@@ -60,7 +60,7 @@ const UploadPage = () => {
     async function uploadToDatabase()
     {
         let jsonData = {
-            userID: user_id,
+            user_id: user_id,
             uploadID: "",
             originalFilename: originalFilename,
             fileType: fileExt,
