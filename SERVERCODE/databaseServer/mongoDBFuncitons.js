@@ -120,21 +120,26 @@ async function login(credentials)
 }
 async function logout(token)
 {
+
     let decoded_token = jwt.decode(token)
     let expirationDate = moment.unix(decoded_token.exp).utc()
     // You can format the date however you like
     expirationDate = expirationDate.format('YYYY-MM-DD, HH:mm:ss');
-    //BLACKLISTED TOKENS COLLECTION
-    const blt_collection = client.db("mediaPlatform").collection("BLACKLISTED_TOKENS")
-    //check if token is valid
-    let valid_token = verify_token(token)
 
-    //blacklists the token by inserting it into the blacklisted database
-    const blacklisted_token = await blt_collection.insertOne({
+    try {
+        //BLACKLISTED TOKENS COLLECTION
+        const blt_collection = client.db("mediaPlatform").collection("BLACKLISTED_TOKENS")
+        //blacklists the token by inserting it into the blacklisted database
+        await blt_collection.insertOne({
             "token": token,
             "expiration": expirationDate
         })
-    return true
+        return 201
+    } catch (e) {
+        //there was a server/database error logging out
+        return 501
+    }
+
 
 }
 //checks if token is valid and not blacklisted
@@ -158,6 +163,7 @@ async function verify_token(token)
 
         */
         //console.log('JWT will expire at: ', new Date(verified.exp * 1000));
+
         //check if token is blacklisted
         const blt_collection = client.db("mediaPlatform").collection("BLACKLISTED_TOKENS")
         const blacklisted_token = await blt_collection.findOne({
@@ -202,8 +208,46 @@ async function getProfile(user_id)
 {
     const uploadsCollection = client.db("mediaPlatform").collection("USERS")
     let full_profile = await uploadsCollection.findOne({userID: user_id})
+
     let profile = {"username": full_profile.username, "email": full_profile.email, "creationDate": full_profile.creationDate}
     return profile;
 }
+//returns status code depending on if account edit is successful
+async function editAccount(user_id, new_info)
+{
 
-module.exports = {createAccount, login, logout, upload, getUploads, getProfile, verify_token}
+    const uploadsCollection = client.db("mediaPlatform").collection("USERS")
+    //TODO CHECK IF "OLD PASSWORD" IS THE SAME AS EXISTING PASSWORD
+    //console.log("fetching " + user_id + " document")
+    let oldAccount = await uploadsCollection.findOne({userID: user_id})
+    if(new_info.hasOwnProperty("password"))
+    {
+        let hashed_old_password = sha256Hash(new_info.old_password)
+        //check if provided "original password" matches the one currently in database
+        if(oldAccount.password === hashed_old_password)
+        {
+            //passwords are correctS
+            delete new_info.old_password
+            //hash incoming password before updating it
+            new_info.password = sha256Hash(new_info.password)
+        }
+        else
+        {
+            //passwords do not match!
+            return 400
+        }
+    }
+    try{
+        //console.log("userid to upldate: " + user_id)
+        //console.log("new info: " + JSON.stringify(new_info))
+        //update user's document in database
+        await uploadsCollection.updateOne({userID: user_id}, {$set: new_info})
+        //successfully updated account
+        return 201
+    } catch (e) {
+        //error updating database
+        return 500
+    }
+
+}
+module.exports = {createAccount, login, logout, upload, getUploads, getProfile, editAccount, verify_token}

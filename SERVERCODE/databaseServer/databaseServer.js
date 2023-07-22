@@ -4,6 +4,8 @@ const cors = require('cors');
 const db = require("./mongoDBFuncitons.js")
 const jwt = require('jsonwebtoken');
 const {expressjwt: eJWT} = require("express-jwt");
+const {response} = require("express");
+
 
 
 //JWT SECRET KEY
@@ -13,15 +15,14 @@ const app = express()
 app.use(cors());
 app.use(express.json());
 
-
-app.use(function (err, req, res, next) {
-    //returns true if token is valid aka not blacklisted
-    let blacklist_check =db.verify_token()
-    if (err.name === 'UnauthorizedError' || blacklist_check === false) {  // expressJwt throws UnauthorizedError for invalid tokens
-        res.send({ isValid: false });
-    }
-});
-
+// JWT validation
+async function verifyToken(req) {
+    console.log("verifying jwt")
+    // If expressJwt middleware does not throw an error, the token is valid
+    const authHeader = req.headers['authorization'];
+    const token = authHeader.split(' ')[1]; // Bearer <token>
+    return await db.verify_token(token);
+}
 //create account
 app.post('/api/createAccount', async (req, res) => {
     console.log("creating account")
@@ -38,7 +39,6 @@ app.post('/api/createAccount', async (req, res) => {
         console.log("sending 409 error")
         res.status(409).send()
     }
-
 })
 
 //user login
@@ -64,34 +64,24 @@ app.post('/api/login', async (req, res) => {
 //user logout
 app.post('/api/logout', async (req, res) => {
     console.log("logout request made")
-    if(await verifyToken(req))
+    let tokenValid = await verifyToken(req)
+    if(tokenValid)
     {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
         let logout = await db.logout(token)
-        if(logout)
-        {
-            res.send("logout successful")
-        }
-        else
-        {
-            //TODO RETURN ERROR NO LOGIN
-            // User is not authenticated
-            res.status(401).send('Invalid credentials');
-        }
+        //returns 201 if successful, 500 if there was a server/database error blacklisting the token
+        return logout
     }
+    else
+    {
+        //token was not valid, so logout anyway
+        console.log("sending 401 status")
+        res.status(401).send()
 
+    }
 })
-// JWT validation
-async function verifyToken(req) {
-    console.log("verifying jwt")
-    // If expressJwt middleware does not throw an error, the token is valid
-    const authHeader = req.headers['authorization'];
-    const token = authHeader.split(' ')[1]; // Bearer <token>
-    let check = await db.verify_token(token)
-    return check;
-    //res.send({ isValid: check });
-}
+
 
 //upload a file to the database
 app.post('/api/upload', async (req, res) => {
@@ -120,6 +110,26 @@ app.get('/api/user/:user_id', async (req, res) => {
     let final_profile = {"profile": profile, "uploads": uploads}
     res.send(final_profile)
 })
+//change account details
+app.post('/api/editAccount', async (req, res) => {
+    //verificationCheck
+    if(await verifyToken(req))
+    {
+        //after token is verified,
+        //get user_id from token
+        const authHeader = req.headers['authorization'];
+        const token = authHeader.split(' ')[1]; // Bearer <token>
+        const decoded_token = jwt.decode(token)
+        //get user_id from decoded token
+        const user_id = decoded_token.user_id
+
+        let editStatus = await db.editAccount(user_id, req.body)
+
+        res.status(editStatus).send()
+        //console.log("successfully edited " + user_id + " account")
+    }
+})
+
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
 })

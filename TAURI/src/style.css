@@ -32,13 +32,15 @@ button {
 button {
   cursor: pointer;
 }
+/*applies css to basically everything*/
 body {
   margin: 0;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-
+  padding: 10px;
   color: #BF1363;
+  box-sizing: border-box; /*Removes scroll bar introduced by padding*/
 }
 
 h1 {

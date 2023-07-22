@@ -8,6 +8,7 @@ import CreateAccount from "./routes/createAccount.jsx";
 import UserPage from "./routes/userPage.jsx";
 import UploadPage from "./routes/uploadREGULAR.jsx";
 import ViewDownloads from "./routes/viewDownloads.jsx";
+import EditAccount from "./routes/editAccount.jsx";
 function App() {
     return (
         <>
@@ -18,6 +19,7 @@ function App() {
                         <Route path ="login" element={<Login/>} />
                         <Route path ="logout" element={<Logout/>} />
                         <Route path="my_profile" element={<Profile/>}/>
+                        <Route path="account_settings" element={<EditAccount/>}/>
                         <Route path="create_account" element={<CreateAccount/>}/>
                         <Route path ="user/:userID" element={<UserPage/>} />
                         <Route path ="upload" element={<UploadPage/>} />

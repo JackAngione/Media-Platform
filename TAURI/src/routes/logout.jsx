@@ -9,7 +9,7 @@ import {serverAddress} from "../serverInfo.js";
 const Logout = () => {
 
     const navigate = useNavigate();
-
+    const [logoutStatus, setLogoutStatus] = useState("")
     //send logout request to server
     async function logout()
     {
@@ -20,11 +20,38 @@ const Logout = () => {
                 Authorization: `Bearer ${token}`,  // Pass JWT in Authorization header
             }})
             .then(response=> {
-                //remove cookie
-                Cookies.remove('jwt')
-                //redirect to log in page
-                navigate("/login");
+                //TODO ONLY LOG OUT IF SERVER SENDS CORRECT STATUS
 
+                if(response.status === 201)
+                {
+                    //server side successfully processed logout
+                    setLogoutStatus("logging out...")
+                    //remove cookie
+                    Cookies.remove('jwt')
+                    //redirect to log in page
+                    navigate("/login");
+                }
+                else
+                {
+                    console.log("unknown logout response??")
+                }
+            })
+            .catch(error =>{
+                if(error.response.status === 401)
+                {
+                    //client token(login) was not valid, so force logout anyway
+                    //remove cookie
+                    setLogoutStatus("logging out...")
+                    Cookies.remove('jwt')
+                    //redirect to log in page
+                    navigate("/login");
+                }
+                else if(error.response.status === 500)
+                {
+                    //server is currently unable to process the logout
+                    //keep user logged in for now
+                    setLogoutStatus("there was a server error logging out, please try again later.")
+                }
             })
     }
 
@@ -34,7 +61,7 @@ const Logout = () => {
             <button type="button" onClick={() => logout()}>
                 Logout
             </button>
-
+            {logoutStatus}
         </div>
     );
 }

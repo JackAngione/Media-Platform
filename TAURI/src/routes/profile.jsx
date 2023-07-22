@@ -5,11 +5,13 @@ import axios from "axios";
 import {serverAddress} from "../serverInfo.js";
 import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
+import {Link, useNavigate} from "react-router-dom";
 
 export default function Profile() {
     const [user_id, setUser_id] = useState("");
     const [userProfile, setUserProfile] = useState({})
     const [userUpoads, setUserUploads] = useState()
+    const navigate = useNavigate()
     //when current user id is retrieved, get the profile information from server
     useEffect(() => {
         if(user_id !== "")
@@ -56,11 +58,14 @@ export default function Profile() {
     }
 
     function downloadFile(userID, uploadID) {
-        
+
     }
 
     return (
             <>
+                <button onClick={()=>{navigate("/account_settings")}}>
+                    Account Settings
+                </button>
                 <ProfileData/>
 
 
