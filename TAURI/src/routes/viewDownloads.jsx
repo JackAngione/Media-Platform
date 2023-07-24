@@ -15,12 +15,12 @@ export default function ViewDownloads() {
         {
             if (userFolders.length > 0) {
                 let tempArray = {}
-                for (let usernam_e of userFolders) {
+                for (let username_ of userFolders) {
                     //for each username, get all the downloaded files in their folder
-                    await invoke("get_user_uploads", {username: usernam_e})
+                    await invoke("get_user_uploads", {user_id: username_})
                         .then((uploads) => {
                             console.log("uploads: " + typeof uploads)
-                            tempArray[usernam_e] = uploads
+                            tempArray[username_] = uploads
                         })
                 }
                 console.log("final temp array: " + JSON.stringify(tempArray))

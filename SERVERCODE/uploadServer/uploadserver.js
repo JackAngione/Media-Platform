@@ -56,7 +56,7 @@ app.post("/upload", upload.array('chunk', 1), async (req, res) => {
 
 app.post("/download", async (req, res) => {
     let uploadID = req.body.uploadID
-    let userID =  req.body.userID
+    let user_id =  req.body.user_id
     let currentChunk = req.body.needed_chunk
 
     let chunkStart = chunkSize * currentChunk
@@ -68,7 +68,7 @@ app.post("/download", async (req, res) => {
     console.log("sending bytes: " + chunkStart + " to " + chunkEnd)
 
     //open File
-    const readStream = fs.createReadStream(`../../ServerFiles/USERS/${userID}/UPLOADS/${uploadID}.jack`, {start: chunkStart, end: chunkEnd });
+    const readStream = fs.createReadStream(`../../ServerFiles/USERS/${user_id}/UPLOADS/${uploadID}.jack`, {start: chunkStart, end: chunkEnd });
     readStream.on('open', function(chunk) {
         readStream.pipe(res);
     });
@@ -80,9 +80,9 @@ app.post("/download", async (req, res) => {
 app.post("/getChunkCount", async (req, res) => {
     //console.log("CURRENT DIRECTORY: " + path.resolve(process.cwd(), '..', '..'));
     let uploadID = req.body.uploadID
-    let userID =  req.body.userID
+    let user_id =  req.body.user_id
 
-    let fileSize = fs.statSync(`../../ServerFiles/USERS/${userID}/UPLOADS/${uploadID}.jack`).size;
+    let fileSize = fs.statSync(`../../ServerFiles/USERS/${user_id}/UPLOADS/${uploadID}.jack`).size;
     console.log("file size: " + fileSize)
 
     //calculate how many chunks will need to be sent

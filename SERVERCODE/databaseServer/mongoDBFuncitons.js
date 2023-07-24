@@ -209,10 +209,10 @@ async function upload(upload)
     return upload_id
 }
 //get all uploads for a specific user
-async function getUploads(userID)
+async function getUploads(user_id)
 {
     const uploadsCollection = client.db("mediaPlatform").collection("UPLOADS")
-    return await uploadsCollection.find({userID: userID}).toArray()
+    return await uploadsCollection.find({user_id: user_id}).toArray()
 }
 //get a user's profile information
 async function getProfile(user_id)
