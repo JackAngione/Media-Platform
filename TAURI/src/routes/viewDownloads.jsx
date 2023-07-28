@@ -2,7 +2,7 @@
 import {invoke} from "@tauri-apps/api/tauri";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import "./userpage.css";
+import "./usersearchpage.css";
 import { Player } from 'video-react';
 import ReactPlayer from "react-player";
 

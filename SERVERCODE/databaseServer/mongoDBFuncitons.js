@@ -226,7 +226,6 @@ async function getProfile(user_id)
 //returns status code depending on if account edit is successful
 async function editAccount(user_id, new_info)
 {
-
     const uploadsCollection = client.db("mediaPlatform").collection("USERS")
     //TODO CHECK IF "OLD PASSWORD" IS THE SAME AS EXISTING PASSWORD
     //console.log("fetching " + user_id + " document")

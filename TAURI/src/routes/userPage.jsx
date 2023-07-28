@@ -1,64 +1,29 @@
-import {invoke} from "@tauri-apps/api/tauri";
+import {useParams} from "react-router";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import "./userpage.css";
+import {invoke} from "@tauri-apps/api/tauri";
 import axios from "axios";
 import {serverAddress} from "../serverInfo.js";
-import { InstantSearch, SearchBox, Hits, Highlight } from 'react-instantsearch-dom';
-import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
-import Cookies from "js-cookie";
-import jwtDecode from "jwt-decode";
-export default function UserPage(props) {
-    const [searchUsername, setSearchUsername] = useState("xxxxxxx");
-    let [userIDJSON, setUserIDJSON] = useState("");
-    let [usernameJSON, setUsernameJSON] = useState("");
-    let [uploadList, setUploadList] = useState([]);
-    let [uploadsJSON, setUploadsJSON] = useState([]);
-    //loads the instant search client using the default search api key
-    const searchClient = instantMeiliSearch(
-        'http://localhost:7700',
-        "eca530cb3cc8304a7c8140e50355e13ddfffb26d018b2bb1e8c2c52f35c97083",
-        {placeholderSearch: false}
-    );
-    //when the currently selected user is changed, load their uploads
-    useEffect( () => {
-        getUserUploads().then(r => {})
-    },[searchUsername]);
-    const Hit = ({ hit }) => {
-        //hit is basically a json object of the document
-        //when clicking on a username in the search box, it sets the searchusername to the userid of the user you clicked
-        return(
-        <>
-            <button onClick={()=>{
-                setSearchUsername(hit.user_id)
-            }}>
-                <Highlight attribute="username" hit={hit}/>
-            </button>
-        </>
-            )
-    };
 
+export default function UserPage(props)
+{
+    let [userProfile, setUserProfile] = useState("");
+
+    const {user_id} = useParams()
+    useEffect(() => {
+           getUserInfo().then(r => {})
+    }, []);
     async function getUserInfo()
     {
-        setUploadsJSON(JSON.parse(uploadList))
-
-        let userJSON = JSON.parse(searchUsername)
-        setUserIDJSON(userJSON.user_id);
-        setUsernameJSON(userJSON.username);
-        console.log(uploadsJSON)
-        console.log("user_id = " + userIDJSON)
-        console.log("Username = " + usernameJSON)
-    }
-    async function getUserUploads()
-    {
-        await axios.get(serverAddress + '/api/userUpoads', {
+        //get profile information
+        axios.get(serverAddress + `/api/user/${user_id}`, {
             params: {
-                user_id: searchUsername
+                user_id: user_id
             }
         }).then(function (res) {
-                //console.log(JSON.stringify(res.data));
-                setUploadList(res.data)
-            })
+            //console.log(JSON.stringify(res.data));
+            setUserProfile(res.data)
+        })
     }
 
     //invoke rust function to download file to device
@@ -71,23 +36,12 @@ export default function UserPage(props) {
 
     return(
         <>
-            <h1>User: {searchUsername}</h1>
-            <div className = "searchResults">
-                <InstantSearch
-                   indexName="users"
-                   searchClient={searchClient}
-                >
-                    <SearchBox/>
-                    <Hits hitComponent={Hit} />
-                </InstantSearch>
-            </div>
-            
             <h1>
-                user_id: {userIDJSON} _ Username:{usernameJSON}
+                user_id: {user_id} _ Username:{userProfile.profile?.username}
             </h1>
             <p>UPLOADS:</p>
             <ul id="uploadsList">
-                {uploadList.map((item, index) => (
+                {userProfile.uploads?.map((item, index) => (
                     <li key={index} id="list-item">
 
                         videoID: {item.uploadID}  <h1><a id="titleLink" href="#" onClick={() => {}}>TITLE: {item.title}</a> </h1>
@@ -97,7 +51,6 @@ export default function UserPage(props) {
                     </li>
                 ))}
             </ul>
-
         </>
     )
 }

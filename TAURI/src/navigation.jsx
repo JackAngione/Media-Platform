@@ -28,7 +28,7 @@ export default function NavigationBar(){
                     <Link className ="mainDropdownResources">User</Link>
                     <div className="dropDownList">
                         <Link to="/upload">UPLOAD File</Link>
-                        <Link to="/user/xxxxxxx">xxxxxx user page</Link>
+                        <Link to="userSearchPage">User Search Page</Link>
                         <Link to="viewDownloads">View Downloads</Link>
                     </div>
                 </div>

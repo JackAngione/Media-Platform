@@ -15,3 +15,4 @@ SERVERCODE/secret_keys.js
 /ServerFiles/USERS/
 scratch_notes.txt
 /TAURI/downloaded_files/
+SERVERCODE/searchServer/users.json

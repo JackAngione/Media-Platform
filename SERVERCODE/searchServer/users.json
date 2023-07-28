@@ -1,25 +1,16 @@
-[
-  {
-  "id": 1,
-  "userID": "xxxxxxx",
+[{
   "username": "ADMIN",
-  "email": "8jk.ang8@gmail.com",
-  "password": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
-  "creationDate": "2023/01/01, 00:00:00"
+  "user_id": "xxxxxxx"
 },
 {
-  "id": 2,
-  "userID": "xHRjx9w",
   "username": "xxxavier",
-  "email": "awrjj",
-  "password": "e742cbea43c6966767fcdbdb4ab7640cb26e765c94011be26b90346daa02676f",
-  "creationDate": "01-01-2023"
+  "user_id": "xHRjx9w"
 },
 {
-  "id": 3,
-  "userID": "0DbBLZa",
-  "username": "x093ubobby",
-  "email": "newAccount@gmail.com",
-  "password": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
-  "creationDate": "2023-07-11, 23:05:38"
+  "username": "thatdrank!?",
+  "user_id": "0DbBLZa"
+},
+{
+  "user_id": "O9K6rqT",
+  "username": "ftt4"
 }]
