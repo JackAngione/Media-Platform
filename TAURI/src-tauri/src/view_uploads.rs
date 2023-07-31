@@ -41,18 +41,25 @@ pub fn get_user_uploads(user_id: &str) -> Vec<String>
             let path = entry.path();
             //filter only by folders, not files
             if !path.is_dir() {
-                println!("{}", &path.display());
+                //println!("{}", &path.display());
                 let os_str = path.file_name().unwrap().to_owned();
                 let str = os_str.to_str().unwrap().to_owned();
                 let final_upload_path = format!("../{}/{}", user_path_string, &str);
-                println!("{}", &final_upload_path);
-                uploads.push(final_upload_path);
+                //println!("{}", &final_upload_path);
+                //adds the upload_id to the final array
+
+                let upload_id = str[0..7].to_string();
+                uploads.push(upload_id);
             }
         }
-        for i in &uploads
-        {
-            println!("{}", i);
-        }
     }
+    //returns an array of upload_ids for the inputted user
     return uploads;
+}
+//returns a list of the downloaded files
+#[tauri::command(rename_all = "snake_case")]
+pub fn downloaded_check(user_id: &str) -> bool
+{
+    //return a list of
+    return true
 }

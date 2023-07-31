@@ -10,6 +10,7 @@ import UploadPage from "./routes/uploadREGULAR.jsx";
 import ViewDownloads from "./routes/viewDownloads.jsx";
 import EditAccount from "./routes/editAccount.jsx";
 import UserPage from "./routes/userPage.jsx";
+import ViewUpload from "./routes/viewUpload.jsx";
 function App() {
     return (
         <>
@@ -26,6 +27,7 @@ function App() {
                         <Route path="user/:user_id" element={<UserPage/>}/>
                         <Route path ="upload" element={<UploadPage/>} />
                         <Route path ="viewDownloads" element={<ViewDownloads/>} />
+                        <Route path ="viewUpload" element={<ViewUpload/>} />
                     </Routes>
             </BrowserRouter>
         </>
