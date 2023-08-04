@@ -6,12 +6,26 @@ import {serverAddress} from "../serverInfo.js";
 import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
 import {Link, useNavigate} from "react-router-dom";
+import Get_Downloaded_Files from "../get_downloaded.jsx";
 
 export default function Profile() {
     const [user_id, setUser_id] = useState("");
     const [userProfile, setUserProfile] = useState({})
     const [userUpoads, setUserUploads] = useState()
     const navigate = useNavigate()
+
+    const [uploadPaths, setUploadPaths] = useState({})
+    useEffect(() => {
+        async function getDownloadedFiles() {
+            await Get_Downloaded_Files().then((pathsData) =>{
+                console.log(pathsData)
+                setUploadPaths(pathsData)
+            }).catch(err => console.error(err))
+        }
+        getDownloadedFiles().then(r => {})
+    }, []);
+
+
     //when current user id is retrieved, get the profile information from server
     useEffect(() => {
         if(user_id !== "")
@@ -74,10 +88,24 @@ export default function Profile() {
                     {userProfile.uploads?.map((item, index) => (
                         <li key={index} id="list-item">
 
-                            videoID: {item.uploadID}  <h1><a id="titleLink" href="#" onClick={() => {}}>TITLE: {item.title}</a> </h1>
-                            <button type="button" onClick={() => downloadFile(item.user_id, item.uploadID)}>
-                                Download
-                            </button>
+                            videoID: {item.uploadID}
+                            <h1><a id="titleLink" href="#" onClick={() => {}}>TITLE: {item.title}</a> </h1>
+
+                            {//CODE to display a download vs view button for an upload
+                            }
+                            {
+                                uploadPaths[user_id].includes(item.uploadID) ? (<button
+                                        onClick={()=> {
+                                            navigate("/viewUpload", {state:{user_id:user_id, upload_id: item.uploadID}})
+                                        }}>View</button>) :
+                                    (<button
+                                        type="button"
+                                        onClick={() => downloadFile(item.user_id, item.uploadID)}
+                                    >
+                                        Download
+                                    </button>)
+                            }
+
                         </li>
                     ))}
                 </ul>

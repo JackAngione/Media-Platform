@@ -14,8 +14,6 @@ export default function ViewDownloads() {
             console.log(pathsData)
             setUploadPaths(pathsData)
         }).catch(err => console.error(err))
-
-
     }
     return(
         <>
@@ -34,13 +32,10 @@ export default function ViewDownloads() {
                               controls={true}
                               volume={0.25}/>
                             {/*TODO MAKE A COMPONENT THAT DYNAMICALLY FIGURES OUT WHICH MEDIA TYPE audio/vidoe/picture*/}
-
                         </div>
-
                     ))}
                 </div>
             ))}
         </>
     )
-
 }
